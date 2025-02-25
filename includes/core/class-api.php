@@ -50,17 +50,11 @@ class Coimne_API
             return ['success' => false, 'message' => __('La URL de la API no está configurada.', 'coimne-custom-content')];
         }
 
-        $response = wp_remote_post($this->api_url . '/login', [
-            'body' => http_build_query([
-                'USER' => $username,
-                'PASS' => $password
-            ]),
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded'
-            ],
-            'timeout' => 15,
-            'sslverify' => $this->ssl_verify,
-        ]);
+        $response = $this->post(
+            $this->api_url . '/login',
+            [ 'Content-Type' => 'application/x-www-form-urlencoded'],
+            [ 'USER' => $username, 'PASS' => $password ]
+        );
 
         if (is_wp_error($response)) {
             return ['success' => false, 'message' => __('Error de conexión con la API.', 'coimne-custom-content')];
@@ -93,8 +87,135 @@ class Coimne_API
         ];
     }
 
+    public function check_session_status($response)
+    {
+        if (!is_array($response) || !isset($response['status']) || $response['status'] !== false) {
+            return;
+        }
+
+        if (isset($response['desc']['error']) && $response['desc']['error'] === 'Token invalido') {
+            $this->session->clear_session();
+
+            return $this->homeRedirect();
+        }
+    }
+
     public function get_user_data()
     {
-        return $this->session->get_session('coimne_user_data');
+        $userData = $this->session->get_session('coimne_user_data');
+        if (!$userData) {
+            return $this->homeRedirect();
+        }
+
+        return $userData;
+    }
+
+    public function get_user_profile()
+    {
+        $userData = $this->get_user_data();
+        if (!$userData) return null;
+
+        $user_id = $userData['cttId'];
+        $user_type = $userData['tip'];
+        
+        $api_url = get_option('coimne_api_url', '');
+        $endpoint = "/Perfil?CTT_ID=$user_id&TIP=$user_type";
+
+        $response = $this->get(
+            rtrim($api_url, '/') . $endpoint,
+            [
+                'Authorization' => 'Bearer ' . $userData['token'],
+                'Accept' => 'application/json'
+            ]
+        );
+
+        if (is_wp_error($response)) {
+            return null;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        $this->check_session_status($data);
+
+        if (!$data || empty($data['status']) || empty($data['desc']['list'][0])) {
+            return null;
+        }
+
+        return $data['desc']['list'][0];
+    }
+
+    public function set_user_profile($data)
+    {
+        $userData = $this->get_user_data();
+        if (!$userData) {
+            return ['success' => false, 'message' => __('No estás autenticado.', 'coimne-custom-content')];
+        }
+
+        $token = $userData['token'];
+        if (!$token) {
+            return ['success' => false, 'message' => __('Token no encontrado.', 'coimne-custom-content')];
+        }
+
+        // Endpoint a confirmar
+        $api_url = get_option('coimne_api_url', '');
+        $endpoint = "/Perfil/Actualizar"; // Ajustar cuando se confirme el endpoint correcto
+
+        $response = $this->post(
+            rtrim($api_url, '/') . $endpoint,
+            [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type'  => 'application/json'
+            ],
+            $data
+        );
+
+        if (is_wp_error($response)) {
+            return ['success' => false, 'message' => __('Error de conexión con la API.', 'coimne-custom-content')];
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!$body || empty($body['status'])) {
+            return ['success' => false, 'message' => __('Respuesta inválida del servidor.', 'coimne-custom-content')];
+        }
+
+        if ($body['status'] === false) {
+            return ['success' => false, 'message' => $body['desc']['error'] ?? __('Error desconocido.', 'coimne-custom-content')];
+        }
+
+        // Acá habría que actualizar sesión con los nuevos datos del usuario
+        //
+        //
+
+        return ['success' => true, 'message' => __('Perfil actualizado correctamente.', 'coimne-custom-content')];
+    }
+
+    private function get($url, $headers = [], $body = [])
+    {
+        return wp_remote_get($url, [
+            'headers' => $headers,
+            'sslverify' => $this->ssl_verify,
+        ]);
+    }
+
+    private function post($url, $headers = [], $body = [])
+    {
+        return wp_remote_post($url, [
+            'body' => http_build_query($body),
+            'headers' => $headers,
+            'timeout' => 15,
+            'sslverify' => $this->ssl_verify,
+        ]);
+    }
+
+    private function homeRedirect()
+    {
+        if (!headers_sent()) {
+            wp_safe_redirect(home_url());
+            exit;
+        } else {
+            echo '<script>window.location.href="' . esc_url(home_url()) . '";</script>';
+            exit;
+        }
     }
 }

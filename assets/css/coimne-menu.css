@@ -1,0 +1,50 @@
+.coimne-dashboard-menu-container {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.coimne-dashboard-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.coimne-dashboard-greeting {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.coimne-profile-menu {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.coimne-profile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.coimne-profile-menu li {
+    margin-bottom: 10px;
+}
+
+.coimne-profile-menu button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background: #0073aa;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.coimne-profile-menu button:hover {
+    background: #005177;
+}

@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,25 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.1 =
+- Implementado un sistema de actualizaciones automáticas desde un repositorio externo.
+- Creado un helper para la gestión de rutas de assets y evitar problemas de caché con `filemtime()`.
+- Agregado un saludo dinámico debajo del avatar en `menu.php`, con soporte para traducciones futuras.
+- Refactorizada la carga de estilos y scripts para que se encolen dinámicamente solo cuando son necesarios.
+- Ahora el menú en `dashboard-menu.php` carga dinámicamente el contenido sin recargar la página.
+- Creada la estructura de templates `dashboard-<nombre>.php` en lugar de `content-<nombre>.php` para mayor coherencia.
+- Agregada validación de sesión para detectar tokens inválidos y redirigir al usuario si la sesión expira.
+- Incorporado reCAPTCHA v2 en el formulario de login con validación en frontend y backend.
+- Añadida una sección de configuración con pestañas en el administrador de WordPress, similar a WooCommerce.
+- Creado un switch en la configuración para habilitar el modo de desarrollo, permitiendo manejar `sslverify`.
+- Agregado un control de redirección post-login configurable por el administrador.
+- Implementado un sistema de menús dinámicos (`students_dashboard` y `collegiate_dashboard`) según el tipo de usuario.
+- Creado un shortcode `[coimne_dashboard]` que muestra el menú y el contenido dinámico.
+- Ahora los shortcodes y su funcionalidad están organizados en clases separadas para mayor escalabilidad.
+- Se centralizó la estructura de configuraciones para facilitar futuras expansiones del plugin.
+- Optimizada la estructura de `class-ajax.php` para gestionar mejor las solicitudes dinámicas.
+- Mejorada la compatibilidad con maquetadores como Elementor asegurando que el diseño sea más flexible.
+
 = 1.0.0 =
 - Versión inicial del plugin.
 

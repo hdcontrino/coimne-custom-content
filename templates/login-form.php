@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 
-<?php 
+<?php
 $recaptcha_site_key = get_option('coimne_recaptcha_site_key', '');
 $recaptcha_enabled = !empty($recaptcha_site_key);
 $redirect_url = get_option('coimne_redirect_url', site_url('/dashboard'));
@@ -23,58 +23,11 @@ $redirect_url = get_option('coimne_redirect_url', site_url('/dashboard'));
             </p>
         <?php endif; ?>
 
-        <button type="submit" <?php echo !$recaptcha_enabled ? 'disabled' : ''; ?>><?php _e('Ingresar', 'coimne-custom-content'); ?></button>
-        
+        <button id="coimne-login-submit" type="submit" <?php echo !$recaptcha_enabled ? 'disabled' : ''; ?>>
+            <?php _e('Ingresar', 'coimne-custom-content'); ?>
+        </button>
+        <span id="coimne-login-loader" class="coimne-loader" style="display: none;"></span>
+
         <p id="coimne-login-message"></p>
     </form>
 </div>
-
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let form = document.getElementById('coimne-login-form');
-    let recaptchaEnabled = <?php echo json_encode($recaptcha_enabled); ?>;
-    let redirectUrl = "<?php echo esc_url($redirect_url); ?>";
-
-    if (!recaptchaEnabled) {
-        document.getElementById('coimne-login-message').textContent = "<?php _e('Error: No se puede iniciar sesión porque el reCAPTCHA no está configurado.', 'coimne-custom-content'); ?>";
-        document.getElementById('coimne-login-message').style.color = 'red';
-        return;
-    }
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        let formData = new FormData();
-        formData.append('action', 'coimne_login');
-        formData.append('username', document.getElementById('coimne-username').value);
-        formData.append('password', document.getElementById('coimne-password').value);
-        formData.append('g-recaptcha-response', grecaptcha.getResponse());
-
-        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            let message = document.getElementById('coimne-login-message');
-            if (data.success) {
-                window.location.href = data.redirect ? data.redirect : redirectUrl;
-            } else {
-                message.textContent = data.message;
-                message.style.color = 'red';
-                grecaptcha.reset();
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-});
-</script>
-
-<style>
-.coimne-error-message {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-}
-</style>

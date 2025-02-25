@@ -10,6 +10,15 @@ class Coimne_Ajax
     {
         add_action('wp_ajax_coimne_login', [$this, 'handle_login']);
         add_action('wp_ajax_nopriv_coimne_login', [$this, 'handle_login']);
+
+        add_action('wp_ajax_coimne_logout', [$this, 'handle_logout']);
+        add_action('wp_ajax_nopriv_coimne_logout', [$this, 'handle_logout']);
+
+        add_action('wp_ajax_coimne_get_dynamic_content', [$this, 'get_dynamic_content']);
+        add_action('wp_ajax_nopriv_coimne_get_dynamic_content', [$this, 'get_dynamic_content']);
+
+        add_action('wp_ajax_coimne_set_user_profile', [$this, 'set_user_profile']);
+        add_action('wp_ajax_nopriv_coimne_set_user_profile', [$this, 'set_user_profile']);
     }
 
     public function handle_login()
@@ -68,6 +77,51 @@ class Coimne_Ajax
             ]);
         }
 
+        wp_die();
+    }
+
+    public function handle_logout()
+    {
+        $session = new Coimne_Session();
+        $session->clear_session();
+
+        $redirect_url = home_url();
+
+        wp_send_json([
+            'success' => true,
+            'message' => __('Sesión cerrada correctamente.', 'coimne-custom-content'),
+            'redirect' => esc_url($redirect_url)
+        ]);
+
+        wp_die();
+    }
+    
+    public function get_dynamic_content()
+    {
+        if (!isset($_GET['content'])) {
+            wp_send_json_error(['message' => __('Solicitud inválida.', 'coimne-custom-content')]);
+        }
+
+        $content_type = sanitize_text_field($_GET['content']);
+        $template_path = COIMNE_CUSTOM_CONTENT_DIR . "templates/dashboard-{$content_type}.php";
+
+        if (!file_exists($template_path)) {
+            wp_send_json_error(['message' => __('El contenido solicitado no existe.', 'coimne-custom-content')]);
+        }
+
+        ob_start();
+        include $template_path;
+        $content = ob_get_clean();
+
+        wp_send_json_success(['content' => $content]);
+    }
+
+    public function set_user_profile()
+    {
+        $api = new Coimne_API();
+        $response = $api->set_user_profile($_POST);
+
+        wp_send_json($response);
         wp_die();
     }
 }

@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 function coimne_register_general_settings()
 {
-    register_setting('coimne_settings_group_general', 'coimne_redirect_url');
+    register_setting('coimne_settings_group_general', COIMNE_OPTION_REDIRECT_URL);
 
     add_settings_section(
         'coimne_general_section',
@@ -16,7 +16,7 @@ function coimne_register_general_settings()
     );
 
     add_settings_field(
-        'coimne_redirect_url',
+        COIMNE_OPTION_REDIRECT_URL,
         __('URL de Redirección después del Login', 'coimne-custom-content'),
         'coimne_redirect_url_callback',
         'coimne-settings-general',
@@ -27,8 +27,11 @@ function coimne_register_general_settings()
 // Callback para la URL de redirección
 function coimne_redirect_url_callback()
 {
-    $redirect_url = get_option('coimne_redirect_url', site_url('/dashboard'));
-    echo "<input type='text' name='coimne_redirect_url' value='" . esc_attr($redirect_url) . "' class='regular-text'>";
+    $redirect_url = get_option(COIMNE_OPTION_REDIRECT_URL, site_url('/dashboard'));
+    ?>
+    <input type="text" name="<?php echo esc_attr(COIMNE_OPTION_REDIRECT_URL); ?>"
+        value="<?php echo esc_attr($redirect_url); ?>" class="regular-text">
+    <?php
 }
 
 // Función para mostrar los shortcodes disponibles
@@ -42,6 +45,8 @@ function coimne_display_shortcodes()
         <ul>
             <li><code>[coimne_login]</code> - <?php _e('Muestra el formulario de inicio de sesión.', 'coimne-custom-content'); ?></li>
             <li><code>[coimne_dashboard]</code> - <?php _e('Muestra el panel de control del usuario logueado.', 'coimne-custom-content'); ?></li>
+            <li><code>[coimne_dashboard_menu]</code> - <?php _e('Muestra menú del panel de control.', 'coimne-custom-content'); ?></li>
+            <li><code>[coimne_user_data]</code> - <?php _e('Muestra los datos del usuario logueado.', 'coimne-custom-content'); ?></li>
             <!-- Agrega más shortcodes aquí si es necesario -->
         </ul>
     </div>

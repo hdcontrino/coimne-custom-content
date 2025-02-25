@@ -1,0 +1,33 @@
+.coimne-dashboard-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    gap: 20px;
+    overflow: hidden;
+    line-break: anywhere;
+}
+
+/* Estilo del menú en desktop */
+.coimne-dashboard-menu {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+/* Contenedor de contenido dinámico */
+.coimne-dashboard-content {
+    flex-grow: 1;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+/* RESPONSIVE: En mobile, el menú se ubica arriba */
+@media (max-width: 768px) {
+    .coimne-dashboard-container {
+        flex-direction: column;
+    }
+
+    .coimne-dashboard-menu {
+        width: 100%;
+    }
+}
