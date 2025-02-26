@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,14 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.2 =
+- Implementada verificación automática de dependencias en `vendor/` después de una actualización del plugin.
+- Ahora el plugin instalará `vendor/` automáticamente si no existe, sin requerir intervención manual.
+- Si `vendor/` cambia entre versiones, el plugin detectará la diferencia y actualizará automáticamente las dependencias.
+- Se eliminó `vendor/` del repositorio, siguiendo buenas prácticas de gestión de dependencias con Composer.
+- Corrección en la carga de actualizaciones del plugin, evitando errores si `vendor/` no está presente.
+- Mejoras en la estructura del código para mayor estabilidad y escalabilidad.
+
 = 1.0.1 =
 - Implementado un sistema de actualizaciones automáticas desde un repositorio externo.
 - Creado un helper para la gestión de rutas de assets y evitar problemas de caché con `filemtime()`.
