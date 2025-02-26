@@ -1,0 +1,36 @@
+name: Auto Release Plugin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get version from updates.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' updates.json)
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create ZIP package
+        run: |
+          mkdir -p coimne-custom-content
+          rsync -av --progress ./ coimne-custom-content/ --exclude coimne-custom-content --exclude .git --exclude .github
+          zip -r coimne-custom-content.zip coimne-custom-content
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PLUGIN_VERSION }}
+          release_name: "Coimne Custom Content v${{ env.PLUGIN_VERSION }}"
+          body: "Nueva versión ${{ env.PLUGIN_VERSION }} de Coimne Custom Content."
+          draft: false
+          prerelease: false
+          files: coimne-custom-content.zip

@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.0
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,18 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.3 =
+- Implementado un sistema automático de releases en GitHub para gestionar actualizaciones sin intervención manual.
+- Ahora el plugin detecta nuevas versiones mediante `updates.json` y las instala automáticamente en WordPress.
+- Eliminada la necesidad de tags manuales en GitHub, reemplazado por un workflow automatizado.
+- Refactorizada la gestión de `vendor/` para manejar la instalación de dependencias de Composer sin requerir comandos manuales.
+- Creada una verificación dinámica de `PHP CLI` y `Composer`, con fallback a una descarga alternativa de `vendor.zip` si no están disponibles.
+- Centralizado el manejo de errores en `Coimne_Vendor_Manager`, permitiendo mostrar notificaciones en el administrador de WordPress según el tipo de problema detectado.
+- Corrección en la limpieza de notificaciones en WordPress después de la instalación exitosa de `vendor/`, evitando que mensajes como "Instalando dependencias con Composer..." queden visibles indefinidamente.
+- Ajustes en `update-checker.php` para garantizar la compatibilidad con `plugin-update-checker v5.5`, eliminando el uso de métodos obsoletos y asegurando que WordPress detecte correctamente las actualizaciones.
+- Mejoras en la estructura y legibilidad del código en `vendor-manager.php`, separando funciones de verificación de rutas para `PHP CLI` y `Composer`, asegurando compatibilidad con distintos entornos.
+- Ahora el sistema de actualización del plugin maneja automáticamente la instalación y configuración de `vendor/` después de cada actualización, garantizando estabilidad sin intervención del usuario.
+
 = 1.0.2 =
 - Implementada verificación automática de dependencias en `vendor/` después de una actualización del plugin.
 - Ahora el plugin instalará `vendor/` automáticamente si no existe, sin requerir intervención manual.
