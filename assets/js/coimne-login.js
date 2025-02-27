@@ -1,18 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-    let form = document.getElementById('coimne-login-form');
-    let submitButton = document.getElementById('coimne-login-submit');
-    let loginMessage = document.getElementById('coimne-login-message');
+    const form = document.getElementById('coimne-login-form');
+    const submitButton = document.getElementById('coimne-login-submit');
+    const loginMessage = document.getElementById('coimne-login-message');
+    const loader = document.getElementById('coimne-login-loader');
 
     if (!submitButton || !form) {
         console.error("Error: No se encontró el formulario de login.");
         return;
     }
-
-    let loader = document.createElement('span');
-    loader.id = "coimne-login-loader";
-    loader.className = "coimne-loader";
-    loader.style.display = "none";
-    submitButton.parentNode.insertBefore(loader, submitButton.nextSibling);
 
     if (!coimneLoginData.recaptchaEnabled) {
         loginMessage.textContent = coimneLoginData.errorMessage;
@@ -22,12 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
+        const submitButtonOriginalContent = submitButton.innerHTML;
 
         submitButton.disabled = true;
         submitButton.textContent = "Ingresando...";
         loader.style.display = "inline-block";
 
-        let formData = new FormData();
+        const formData = new FormData();
         formData.append('action', 'coimne_login');
         formData.append('username', document.getElementById('coimne-username').value);
         formData.append('password', document.getElementById('coimne-password').value);
@@ -54,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .finally(() => {
                 submitButton.disabled = false;
-                submitButton.textContent = "Ingresar";
+                submitButton.innerHTML = submitButtonOriginalContent;
                 loader.style.display = "none";
             });
     });

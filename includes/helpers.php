@@ -11,4 +11,18 @@ class Coimne_Helper
 
         return plugin_dir_url(dirname(__FILE__)) . 'assets/' . ltrim($path, '/') . '?v=' . $version;
     }
+
+    /**
+     * Convierte una fecha de DD/MM/YYYY a YYYY-MM-DD
+     * para ser utilizada en <input type="date">
+     */
+    public static function format_date_to_input($date)
+    {
+        if (empty($date)) {
+            return '';
+        }
+
+        $dateTime = DateTime::createFromFormat('d/m/Y', $date);
+        return $dateTime ? $dateTime->format('Y-m-d') : '';
+    }
 }

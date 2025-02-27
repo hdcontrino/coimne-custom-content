@@ -9,7 +9,7 @@ class Coimne_Menu
     public static function display_dashboard_menu()
     {
         $coimneAPI = new Coimne_API();
-        $user_data = $coimneAPI->get_user_data();
+        $user_data = $coimneAPI->userData;
         $template_path = plugin_dir_path(__FILE__) . '../../templates/dashboard-menu.php';
         
         if ($user_data && file_exists($template_path)) {

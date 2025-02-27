@@ -9,8 +9,7 @@ class Coimne_User
     public static function get_user_data()
     {
         $coimneAPI = new Coimne_API();
-        $user_data = $coimneAPI->get_user_data();
-        $user_profile = $coimneAPI->get_user_profile();
+        $user_data = $coimneAPI->userData;
 
         if (!$user_data) {
             return '<p>' . __('No hay usuario logueado.', 'coimne-custom-content') . '</p>';

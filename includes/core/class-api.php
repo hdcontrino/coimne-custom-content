@@ -6,6 +6,9 @@ if (!defined('ABSPATH')) {
 
 class Coimne_API
 {
+    public $userData;
+    public $token;
+
     private $api_url;
     private $session;
     private $ssl_verify;
@@ -15,6 +18,13 @@ class Coimne_API
         $this->api_url = get_option('coimne_api_url', '');
         $this->session = new Coimne_Session();
         $this->ssl_verify = get_option('coimne_dev_mode', false) ? false : true;
+
+        if (empty($this->api_url)) {
+            return ['success' => false, 'message' => __('La URL de la API no está configurada.', 'coimne-custom-content')];
+        }
+
+        $this->userData = $this->session->get_session('coimne_user_data');
+        $this->token = $this->userData ? $this->userData['token'] : '';
     }
 
     public function verify_recaptcha($recaptcha_response)
@@ -46,39 +56,15 @@ class Coimne_API
 
     public function authenticate_user($username, $password)
     {
-        if (empty($this->api_url)) {
-            return ['success' => false, 'message' => __('La URL de la API no está configurada.', 'coimne-custom-content')];
-        }
+        $contentBody = ['USER' => $username, 'PASS' => $password];
+        $data = $this->post('/login', $contentBody);
 
-        $response = $this->post(
-            $this->api_url . '/login',
-            [ 'Content-Type' => 'application/x-www-form-urlencoded'],
-            [ 'USER' => $username, 'PASS' => $password ]
-        );
-
-        if (is_wp_error($response)) {
-            return ['success' => false, 'message' => __('Error de conexión con la API.', 'coimne-custom-content')];
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        if (!isset($data['status'])) {
-            return ['success' => false, 'message' => __('Respuesta inválida del servidor.', 'coimne-custom-content')];
-        }
-
-        if ($data['status'] === false) {
-            return [
-                'success' => false,
-                'message' => isset($data['desc']['error']) ? $data['desc']['error'] : __('Error desconocido.', 'coimne-custom-content')
-            ];
-        }
-
-        if (!isset($data['desc']['token'])) {
+        if (!$data) {
             return ['success' => false, 'message' => __('No se recibió un token válido.', 'coimne-custom-content')];
         }
 
         $this->session->set_session('coimne_user_data', $data['desc']);
+        $this->token = $data['desc']['token'];
 
         return [
             'success' => true,
@@ -87,47 +73,127 @@ class Coimne_API
         ];
     }
 
-    public function check_session_status($response)
-    {
-        if (!is_array($response) || !isset($response['status']) || $response['status'] !== false) {
-            return;
-        }
-
-        if (isset($response['desc']['error']) && $response['desc']['error'] === 'Token invalido') {
-            $this->session->clear_session();
-
-            return $this->homeRedirect();
-        }
-    }
-
-    public function get_user_data()
-    {
-        $userData = $this->session->get_session('coimne_user_data');
-        if (!$userData) {
-            return $this->homeRedirect();
-        }
-
-        return $userData;
-    }
-
     public function get_user_profile()
     {
-        $userData = $this->get_user_data();
-        if (!$userData) return null;
+        $endpoint = "/Perfil";
+        $user_id = $this->userData['cttId'];
+        $user_type = $this->userData['tip'];
+        $params = "?CTT_ID=$user_id&TIP=$user_type";
 
-        $user_id = $userData['cttId'];
-        $user_type = $userData['tip'];
-        
-        $api_url = get_option('coimne_api_url', '');
-        $endpoint = "/Perfil?CTT_ID=$user_id&TIP=$user_type";
+        $data = $this->get($endpoint . $params);
 
-        $response = $this->get(
-            rtrim($api_url, '/') . $endpoint,
-            [
-                'Authorization' => 'Bearer ' . $userData['token'],
+        if (!$data) {
+            return ['success' => false, 'message' => __('Error recibiendo datos', 'coimne-custom-content')];
+        }
+
+        return $data['desc']['list'][0];
+    }
+
+    public function set_user_profile($profileData)
+    {
+        $contentBody = [
+            'CTT_ID' => $this->userData['cttId'],
+            'TIP' => $this->userData['tip'],
+            'PAI' => $profileData['PAI'],
+            'DIR' => $profileData['DIR'],
+            'CPS' => $profileData['CPS'],
+            'PRO' => $profileData['PRO'],
+            'POB' => $profileData['POB'],
+            'TFN' => $profileData['TFN'],
+            'TFN_MOV' => $profileData['TFN_MOV'],
+            'EML' => $profileData['EML'],
+            'LUG_NAC' => $profileData['LUG_NAC'],
+            'NAC_NAME' => $profileData['NAC_NAME'],
+            'SIT_LAB_NAME' => $profileData['SIT_LAB_NAME'],
+            'EST_CIV_NAME' => $profileData['EST_CIV_NAME'],
+            'CON_NOM' => $profileData['CON_NOM'],
+            'CON_APE_1' => $profileData['CON_APE_1'],
+            'CON_APE_2' => $profileData['CON_APE_2'],
+            'TIT_FCH' => $profileData['TIT_FCH'],
+            'ESC_MIN_NAME' => $profileData['ESC_MIN_NAME'],
+            'EMP' => [
+                'NAME' => $profileData['EMP_NAME'],
+                'PAI' => $profileData['EMP_PAI'],
+                'DIR' => $profileData['EMP_DIR'],
+                'PRO' => $profileData['EMP_PRO'],
+                'POB' => $profileData['EMP_POB'],
+                'TFN' => $profileData['EMP_TFN'],
+                'TFN_MOV' => $profileData['EMP_TFN_MOV'],
+                'EML' => $profileData['EMP_EML'],
+            ],
+            'EMP_DEP' => $profileData['EMP_DEP'],
+            'EMP_CGO' => $profileData['EMP_CGO'],
+            'IBAN' => $profileData['IBAN'],
+            'SWIFT_BIC' => $profileData['SWIFT_BIC'],
+            
+        ];
+        $data = $this->post('/Perfil', $contentBody);
+
+
+        return [
+            'success' => true, 
+            'message' => __('Perfil actualizado correctamente.', 'coimne-custom-content')
+        ];
+    }
+
+    public function get_countries()
+    {
+        if (!$this->userData) return [];
+
+        $endpoint = "/Paises";
+        $user_id = $this->userData['cttId'];
+        $params = "?CTT_ID=$user_id";
+
+        $data = $this->get($endpoint . $params);
+
+        return !$data || empty($data['desc']['list'])
+            ? []
+            : $data['desc']['list'];
+    }
+
+    public function get_provinces($countryId)
+    {
+        if (!$this->userData) return [];
+
+        $endpoint = "/Provincias";
+        $user_id = $this->userData['cttId'];
+        $params = "?CTT_ID=$user_id&PAI=$countryId";
+
+        $data = $this->get($endpoint . $params);
+
+        return !$data || empty($data['desc']['list'])
+            ? []
+            : $data['desc']['list'];
+    }
+
+    public function get_towns($countryId, $provinceId, $zipId = 0)
+    {
+        if (!$this->userData) return [];
+
+        $endpoint = "/Poblaciones";
+        $user_id = $this->userData['cttId'];
+        $params = "?CTT_ID=$user_id&PAI=$countryId&PRO=$provinceId";
+
+        if ($zipId) $params .= "&CP=$zipId";
+
+        $data = $this->get($endpoint . $params);
+
+        return !$data || empty($data['desc']['list'])
+            ? []
+            : $data['desc']['list'];
+    }
+
+    private function get($endpoint)
+    {   
+        $finalUrl = rtrim($this->api_url, '/') . $endpoint;
+
+        $response = wp_remote_get($finalUrl, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token,
                 'Accept' => 'application/json'
-            ]
-        );
+            ],
+            'sslverify' => $this->ssl_verify,
+        ]);
 
         if (is_wp_error($response)) {
             return null;
@@ -141,71 +207,48 @@ class Coimne_API
             return null;
         }
 
-        return $data['desc']['list'][0];
+        return $data;
     }
 
-    public function set_user_profile($data)
+    private function post($endpoint, $body = [])
     {
-        $userData = $this->get_user_data();
-        if (!$userData) {
-            return ['success' => false, 'message' => __('No estás autenticado.', 'coimne-custom-content')];
-        }
+        $finalUrl = rtrim($this->api_url, '/') . $endpoint;
 
-        $token = $userData['token'];
-        if (!$token) {
-            return ['success' => false, 'message' => __('Token no encontrado.', 'coimne-custom-content')];
-        }
-
-        // Endpoint a confirmar
-        $api_url = get_option('coimne_api_url', '');
-        $endpoint = "/Perfil/Actualizar"; // Ajustar cuando se confirme el endpoint correcto
-
-        $response = $this->post(
-            rtrim($api_url, '/') . $endpoint,
-            [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type'  => 'application/json'
-            ],
-            $data
-        );
-
-        if (is_wp_error($response)) {
-            return ['success' => false, 'message' => __('Error de conexión con la API.', 'coimne-custom-content')];
-        }
-
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-
-        if (!$body || empty($body['status'])) {
-            return ['success' => false, 'message' => __('Respuesta inválida del servidor.', 'coimne-custom-content')];
-        }
-
-        if ($body['status'] === false) {
-            return ['success' => false, 'message' => $body['desc']['error'] ?? __('Error desconocido.', 'coimne-custom-content')];
-        }
-
-        // Acá habría que actualizar sesión con los nuevos datos del usuario
-        //
-        //
-
-        return ['success' => true, 'message' => __('Perfil actualizado correctamente.', 'coimne-custom-content')];
-    }
-
-    private function get($url, $headers = [], $body = [])
-    {
-        return wp_remote_get($url, [
-            'headers' => $headers,
-            'sslverify' => $this->ssl_verify,
-        ]);
-    }
-
-    private function post($url, $headers = [], $body = [])
-    {
-        return wp_remote_post($url, [
+        $response = wp_remote_post($finalUrl, [
             'body' => http_build_query($body),
-            'headers' => $headers,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token,
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
             'timeout' => 15,
             'sslverify' => $this->ssl_verify,
         ]);
+
+        if (is_wp_error($response)) {
+            return null;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (!isset($data['status']) || $data['status'] === false) {
+            return null;
+        }
+
+        return $data;
+    }
+
+    private function check_session_status($response)
+    {
+        if (!$this->userData || !$this->token) {
+            $this->session->clear_session();
+            return $this->homeRedirect();
+        }
+
+        if (isset($response['desc']['error']) && $response['desc']['error'] === 'Token invalido') {
+            $this->session->clear_session();
+            return $this->homeRedirect();
+        }
     }
 
     private function homeRedirect()
@@ -213,9 +256,9 @@ class Coimne_API
         if (!headers_sent()) {
             wp_safe_redirect(home_url());
             exit;
-        } else {
-            echo '<script>window.location.href="' . esc_url(home_url()) . '";</script>';
-            exit;
         }
+
+        echo '<script>window.location.replace("' . esc_url(home_url()) . '");</script>';
+        exit;
     }
 }

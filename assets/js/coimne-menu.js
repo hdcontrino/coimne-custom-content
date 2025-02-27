@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
-            let formData = new FormData();
+            const formData = new FormData();
             formData.append("action", "coimne_logout");
 
             fetch(coimneMenuData.ajaxUrl, {
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (userContentContainer) {
         menuProfile.querySelectorAll("li a").forEach(button => {
             button.addEventListener("click", function () {
-                let contentType = this.getAttribute("data-content");
+                const contentType = this.getAttribute("data-content");
                 userContentContainer.innerHTML = "<p>Cargando...</p>";
 
                 fetch(coimneMenuData.ajaxUrl + "?action=coimne_get_dynamic_content&content=" + contentType)

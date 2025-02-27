@@ -41,6 +41,22 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.4 =
+- Implementada la carga dinámica de provincias y poblaciones en función del país seleccionado en el formulario de perfil.
+- Se añadieron indicadores de carga en los selectores mientras se obtienen los datos de la API.
+- Se optimizó la gestión de sesión en `Coimne_API`, consolidando el almacenamiento del token y la información del usuario.
+- Se mejoró la validación y sanitización de datos en `Coimne_Ajax` y `Coimne_API` para evitar datos inconsistentes.
+- Reorganizado el formulario de perfil en `dashboard-profile.php`, agregando nuevos campos:
+  - `FCH_NAC` (fecha de nacimiento), con conversión automática al formato `YYYY-MM-DD` mediante `Coimne_Helper::format_date_to_input()`.
+  - Situación laboral y estado civil ahora son solo de lectura.
+  - Datos de contacto y dirección de la empresa ahora dependen del país y provincia seleccionados.
+- Se corrigió un problema donde las provincias y poblaciones no se actualizaban correctamente al cambiar de país.
+- Se mejoró la experiencia del usuario deshabilitando temporalmente los inputs mientras se envían datos.
+- Solucionado un error donde los datos del formulario podían enviarse incorrectamente si la API tardaba en responder.
+- Se optimizó el código en `coimne-dashboard.js`, `coimne-login.js` y `coimne-menu.js`, mejorando la carga de datos y reduciendo redundancias.
+- Refactorizada la conexión con la API en `Coimne_API` para mejorar el rendimiento y reducir código repetitivo.
+- Se agregaron comentarios en las funciones clave para facilitar el mantenimiento y futuras mejoras.
+
 = 1.0.3 =
 - Implementado un sistema automático de releases en GitHub para gestionar actualizaciones sin intervención manual.
 - Ahora el plugin detecta nuevas versiones mediante `updates.json` y las instala automáticamente en WordPress.

@@ -19,6 +19,12 @@ class Coimne_Ajax
 
         add_action('wp_ajax_coimne_set_user_profile', [$this, 'set_user_profile']);
         add_action('wp_ajax_nopriv_coimne_set_user_profile', [$this, 'set_user_profile']);
+
+        add_action('wp_ajax_coimne_get_provinces', [$this, 'get_provinces']);
+        add_action('wp_ajax_nopriv_coimne_get_provinces', [$this, 'get_provinces']);
+
+        add_action('wp_ajax_coimne_get_towns', [$this, 'get_towns']);
+        add_action('wp_ajax_nopriv_coimne_get_towns', [$this, 'get_towns']);
     }
 
     public function handle_login()
@@ -122,6 +128,51 @@ class Coimne_Ajax
         $response = $api->set_user_profile($_POST);
 
         wp_send_json($response);
+        wp_die();
+    }
+
+    public function get_provinces()
+    {
+        if (!isset($_GET['country'])) {
+            wp_send_json_error(['message' => __('Falta el parámetro de país.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+        $country = sanitize_text_field($_GET['country']);
+        $response = $api->get_provinces($country);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error([
+                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener provincias.', 'coimne-custom-content')
+            ]);
+            wp_die();
+        }
+
+        wp_send_json_success(['list' => $response]);
+        wp_die();
+    }
+
+    public function get_towns()
+    {
+        if (!isset($_GET['country']) || !isset($_GET['province'])) {
+            wp_send_json_error(['message' => __('Faltan parámetros.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+        $country = sanitize_text_field($_GET['country']);
+        $province = sanitize_text_field($_GET['province']);
+        $response = $api->get_towns($country, $province);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error([
+                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener población.', 'coimne-custom-content')
+            ]);
+            wp_die();
+        }
+
+        wp_send_json_success(['list' => $response]);
         wp_die();
     }
 }
