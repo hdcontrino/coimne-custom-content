@@ -53,6 +53,14 @@ class Coimne_Vendor_Manager
     public static function instalar_o_actualizar_composer()
     {
         $vendor_path = COIMNE_CUSTOM_CONTENT_DIR . 'vendor/';
+
+        self::descargar_vendor();
+
+        if (file_exists($vendor_path . 'autoload.php')) {
+            delete_option('coimne_admin_error_notice');
+            return;
+        }
+
         $php_bin = self::obtener_php_bin();
         $composer_bin = self::obtener_composer_bin();
 
@@ -63,7 +71,6 @@ class Coimne_Vendor_Manager
 
         if (!$composer_bin) {
             self::manejar_error('NO_COMPOSER');
-            self::descargar_vendor();
             return;
         }
 
@@ -74,7 +81,6 @@ class Coimne_Vendor_Manager
                 mkdir($vendor_path, 0755, true);
             }
 
-            // Ejecutar Composer con PHP CLI
             $command = "cd " . escapeshellarg(COIMNE_CUSTOM_CONTENT_DIR) . " && $php_bin $composer_bin install --no-dev --optimize-autoloader";
             $output = shell_exec($command . " 2>&1");
             error_log("[Coimne Custom Content] Salida de Composer: $output");
@@ -85,8 +91,6 @@ class Coimne_Vendor_Manager
                 file_put_contents($vendor_path . '.installed_hash', hash_file('sha256', COIMNE_CUSTOM_CONTENT_DIR . 'composer.lock'));
                 delete_option('coimne_admin_error_notice');
             }
-        } else {
-            delete_option('coimne_admin_error_notice');
         }
     }
 
@@ -97,9 +101,24 @@ class Coimne_Vendor_Manager
     {
         $vendor_zip = COIMNE_CUSTOM_CONTENT_DIR . 'vendor.zip';
         $vendor_url = 'https://github.com/hdcontrino/coimne-custom-content/releases/latest/download/vendor.zip';
-        $result = file_put_contents($vendor_zip, file_get_contents($vendor_url));
 
-        if ($result === false) {
+        $response = wp_remote_get($vendor_url, [
+            'timeout' => 30,
+            'sslverify' => false
+        ]);
+
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            self::manejar_error('VENDOR_NO_DESCARGADO');
+            return;
+        }
+
+        $file_contents = wp_remote_retrieve_body($response);
+        if (empty($file_contents)) {
+            self::manejar_error('VENDOR_NO_DESCARGADO');
+            return;
+        }
+
+        if (file_put_contents($vendor_zip, $file_contents) === false) {
             self::manejar_error('VENDOR_NO_DESCARGADO');
             return;
         }
@@ -138,15 +157,12 @@ class Coimne_Vendor_Manager
      */
     private static function obtener_php_bin()
     {
-        // Verificar PHP_BINARY
         $php_bin = PHP_BINARY;
 
-        // Si PHP_BINARY apunta a php-fpm, buscar otro binario
         if (strpos($php_bin, 'php-fpm') !== false) {
             $php_bin = trim(shell_exec("command -v php"));
         }
 
-        // Si sigue vacío o no es ejecutable, buscar en rutas estándar
         $posibles_rutas = [
             '/usr/bin/php',
             '/usr/local/bin/php',
@@ -171,10 +187,8 @@ class Coimne_Vendor_Manager
      */
     private static function obtener_composer_bin()
     {
-        // Verificar si Composer está en el PATH
         $composer_bin = trim(shell_exec("command -v composer"));
 
-        // Si no se encuentra, buscar en rutas estándar
         $posibles_rutas = [
             '/usr/bin/composer',
             '/usr/local/bin/composer',
@@ -194,5 +208,4 @@ class Coimne_Vendor_Manager
     }
 }
 
-// Hook para mostrar errores en admin
 add_action('admin_notices', ['Coimne_Vendor_Manager', 'mostrar_error_admin_notice']);

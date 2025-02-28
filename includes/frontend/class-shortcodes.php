@@ -6,7 +6,7 @@ class Coimne_Shortcodes
         add_shortcode('coimne_login', [$this, 'render_login_form']);
         add_shortcode('coimne_dashboard', [$this, 'dashboard_shortcode']);
         add_shortcode('coimne_dashboard_menu', [$this, 'dashboard_menu_shortcode']);
-        add_shortcode('coimne_user_data', [$this, 'user_data_shortcode']);
+        add_shortcode('coimne_dashboard_profile', [$this, 'dashboard_profile_shortcode']);
     }
 
     public function render_login_form()
@@ -34,6 +34,12 @@ class Coimne_Shortcodes
 
     public function dashboard_shortcode()
     {
+        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
+            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
+                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
+                </div>';
+        }
+        
         wp_enqueue_style('coimne-dashboard-styles', Coimne_Helper::asset_url('css/coimne-dashboard.css'));
         wp_enqueue_script('coimne-dashboard-script', Coimne_Helper::asset_url('js/coimne-dashboard.js'), [], false, true);
 
@@ -48,6 +54,12 @@ class Coimne_Shortcodes
 
     public function dashboard_menu_shortcode()
     {
+        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
+            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
+                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
+                </div>';
+        }
+
         wp_enqueue_style('coimne-menu-styles', Coimne_Helper::asset_url('css/coimne-menu.css'));
         wp_enqueue_script('coimne-menu-script', Coimne_Helper::asset_url('js/coimne-menu.js'), [], false, true);
 
@@ -60,10 +72,16 @@ class Coimne_Shortcodes
         return ob_get_clean();
     }
 
-    public function user_data_shortcode()
+    public function dashboard_profile_shortcode()
     {
+        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
+            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
+                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
+                </div>';
+        }
+        
         ob_start();
-        Coimne_User::get_user_data();
+        Coimne_Dashboard::display_dashboard_profile();
         return ob_get_clean();
     }
 }

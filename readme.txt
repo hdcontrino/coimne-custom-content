@@ -41,6 +41,22 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.5 =
+- Reestructuración del dashboard, permitiendo la carga dinámica de sus secciones.
+- Implementación de pestañas en el formulario de perfil para mejorar la navegación.
+- Se agregó un formulario de recuperación de contraseña con efecto de giro (`flip`).
+- Nueva función `coimne_forgot_password` para gestionar la recuperación de contraseñas vía API.
+- Se optimizó la inicialización de eventos en `coimne-dashboard.js` para evitar pérdidas tras la carga dinámica.
+- Ahora `vendor-manager.php` intentará descargar `vendor.zip` precompilado antes de ejecutar Composer.
+- Se reemplazó `file_get_contents` por `wp_remote_get()` en la gestión de dependencias para mejorar compatibilidad y seguridad.
+- Eliminada la dependencia de `PHP_BINARY` en la instalación automática de `vendor/`.
+- Se mejoró la gestión de menús dinámicos, reorganizando `class-menu.php` y eliminando archivos redundantes.
+- Refactorización de shortcodes, reemplazando `[coimne_user_data]` por `[coimne_dashboard_profile]`.
+- Correcciones en `coimne-menu.js` para asegurar la correcta inicialización del dashboard tras cambios dinámicos.
+- Se mejoró la validación de respuestas de la API en `class-api.php`, añadiendo mensajes de error más detallados.
+- Optimización en la conversión de fechas con `format_date_to_backend()` en `helpers.php`.
+- Correcciones menores en `coimne-dashboard.js` y `coimne-login.js` para mejorar estabilidad y rendimiento.
+
 = 1.0.4 =
 - Implementada la carga dinámica de provincias y poblaciones en función del país seleccionado en el formulario de perfil.
 - Se añadieron indicadores de carga en los selectores mientras se obtienen los datos de la API.

@@ -7,7 +7,7 @@
 
     <div class="coimne-dashboard-content">
         <div id="coimne-dynamic-content">
-            <?php include 'dashboard-profile.php'; ?>
+            <?php echo do_shortcode('[coimne_dashboard_profile]'); ?>
         </div>
     </div>
 </div>

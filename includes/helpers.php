@@ -25,4 +25,17 @@ class Coimne_Helper
         $dateTime = DateTime::createFromFormat('d/m/Y', $date);
         return $dateTime ? $dateTime->format('Y-m-d') : '';
     }
+    /**
+     * Convierte una fecha estándar YYYY-MM-DD a DD-MM-YYYY
+     * para que el backend la pueda entender.
+     */
+    public static function format_date_to_backend($date)
+    {
+        if (empty($date)) {
+            return '';
+        }
+
+        $dateTime = DateTime::createFromFormat('Y-m-d', $date);
+        return $dateTime ? $dateTime->format('d-m-Y') : '';
+    }
 }

@@ -71,6 +71,46 @@
     border-radius: 5px;
 }
 
+.coimne-dashboard-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.coimne-tabs {
+    margin-bottom: 20px;
+}
+
+.tab-menu {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-menu .tab-link {
+    padding: 10px 15px;
+    cursor: pointer;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    margin-right: 5px;
+}
+
+.tab-menu .tab-link.active {
+    background: #fff;
+    font-weight: bold;
+    border-top: 2px solid #0073aa;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
 @media (max-width: 768px) {
     .coimne-dashboard-container {
         flex-direction: column;

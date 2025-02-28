@@ -37,6 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then((response) => response.json())
                     .then((response) => {
                         userContentContainer.innerHTML = response.data.content;
+                        if (typeof coimneDashboard !== "undefined") {
+                            coimneDashboard.init();
+                        } else {
+                            console.error("coimneDashboard no está definido.");
+                        }
                     })
                     .catch((error) => {
                         console.error("Error al cargar el contenido:", error);

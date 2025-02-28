@@ -1,48 +1,38 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 
-<?php
-$api = new Coimne_API();
-$user_profile = $api->get_user_profile();
-$countries = $api->get_countries();
-$provinces = $api->get_provinces($user_profile['PAI']);
-$towns = $api->get_towns($user_profile['PAI'], $user_profile['PRO']);
-$fch_nac = Coimne_Helper::format_date_to_input($user_profile['FCH_NAC'] ?? '');
-$emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
-?>
+<div class="coimne-dashboard-info">
+    <div>
+        <span>Colegiado Nº<?php echo esc_attr($user_profile['NUM_COL']); ?></span>
+        <span>&nbsp;<?php echo esc_attr($user_profile['NAME']); ?></span>
+        <span>&nbsp;<?php echo esc_attr($user_profile['APE_1']); ?></span>
+        <span>&nbsp;<?php echo esc_attr($user_profile['APE_2']); ?></span>
+    </div>
+    <div>
+        <span>NIF:</span>
+        <span><?php echo esc_attr($user_profile['NIF']); ?></span>
+    </div>
+</div>
+
+<div class="coimne-tabs">
+    <ul class="tab-menu">
+        <li class="tab-link active" data-tab="tab1">Dirección y Contacto</li>
+        <li class="tab-link" data-tab="tab2">Datos Personales</li>
+        <li class="tab-link" data-tab="tab3">Formación Académica</li>
+        <li class="tab-link" data-tab="tab4">Empresa</li>
+        <li class="tab-link" data-tab="tab5">Datos de Pago</li>
+    </ul>
+</div>
 
 <div class="coimne-profile-container">
     <form id="profile-form" method="post">
         <input type="hidden" name="action" value="set_user_profile">
 
-        <fieldset>
-            <legend>Colegiado</legend>
-            <div class="info-group">
-                <span class="label">Número colegiado:</span>
-                <span class="value"><?php echo esc_attr($user_profile['NUM_COL']); ?></span>
-            </div>
-            <div class="info-group">
-                <span class="label">Nombre:</span>
-                <span class="value"><?php echo esc_attr($user_profile['NAME']); ?></span>
-            </div>
-            <div class="info-group">
-                <span class="label">Apellido 1:</span>
-                <span class="value"><?php echo esc_attr($user_profile['APE_1']); ?></span>
-                <span class="label">Apellido 2:</span>
-                <span class="value"><?php echo esc_attr($user_profile['APE_2']); ?></span>
-            </div>
-            <div class="info-group">
-                <span class="label">NIF:</span>
-                <span class="value"><?php echo esc_attr($user_profile['NIF']); ?></span>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend>Dirección y Contacto</legend>
+        <fieldset id="tab1" class="tab-pane active">
             <div class="coimne-form-group">
                 <label for="countries">País:</label>
                 <select id="countries" name="PAI" required>
                     <option value="">Seleccionar país</option>
-                    <?php foreach ($countries as $country): ?>
+                    <?php foreach ($countries['data'] as $country): ?>
                         <option value="<?php echo esc_attr($country['ID']); ?>"
                             <?php selected($country['ID'], $user_profile['PAI']); ?>>
                             <?php echo esc_html($country['NAME']); ?>
@@ -62,7 +52,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <label for="provinces">Provincia:</label>
                 <select id="provinces" name="PRO" required>
                     <option value="">Seleccionar provincia</option>
-                    <?php foreach ($provinces as $province): ?>
+                    <?php foreach ($provinces['data'] as $province): ?>
                         <option value="<?php echo esc_attr($province['ID']); ?>"
                             <?php selected($province['ID'], $user_profile['PRO']); ?>>
                             <?php echo esc_html($province['NAME']); ?>
@@ -75,7 +65,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <label for="towns">Población:</label>
                 <select id="towns" name="POB" required>
                     <option value="">Seleccionar población</option>
-                    <?php foreach ($towns as $town): ?>
+                    <?php foreach ($towns['data'] as $town): ?>
                         <option value="<?php echo esc_attr($town['ID']); ?>"
                             <?php selected($town['ID'], $user_profile['POB']); ?>>
                             <?php echo esc_html($town['NAME']); ?>
@@ -93,15 +83,14 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <input type="text" id="mobile" name="TFN_MOV"
                     value="<?php echo esc_attr($user_profile['TFN_MOV']); ?>" required>
             </div>
-            <div class="coimne-form-group">
+            <div class="coimne-form-group" style="display: none;">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="EML"
-                    value="<?php echo esc_attr($user_profile['EML']); ?>" required>
+                    value="<?php echo esc_attr($user_profile['EML']); ?>">
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>Datos personales</legend>
+        <fieldset id="tab2" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="fch_nac">Fecha de Nacimiento:</label>
                 <input type="date" id="fch_nac" name="FCH_NAC" value="<?php echo esc_attr($fch_nac); ?>" required>
@@ -111,24 +100,42 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <input type="text" id="lug_nac" name="LUG_NAC" value="<?php echo esc_attr($user_profile['LUG_NAC']); ?>">
             </div>
             <div class="coimne-form-group">
-                <label for="nac_name">Nacionalidad:</label>
-                <input type="text" id="nac_name" name="NAC_NAME" required readonly
-                    value="<?php echo esc_attr($user_profile['NAC_NAME']); ?>">
+                <label for="nac">Nacionalidad:</label>
+                <select id="nac" name="NAC" required>
+                    <option value="">Seleccionar nacionalidad</option>
+                    <?php foreach ($countries['data'] as $country): ?>
+                        <option value="<?php echo esc_attr($country['ID']); ?>"
+                            <?php selected($country['ID'], $user_profile['NAC']); ?>>
+                            <?php echo esc_html($country['NAC']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="coimne-form-group">
-                <label for="sit_lab_name">Situación Laboral:</label>
-                <input type="text" id="sit_lab_name" name="SIT_LAB_NAME" readonly
-                    value="<?php echo esc_attr($user_profile['SIT_LAB_NAME']); ?>">
+                <label for="sit_lab">Situación Laboral:</label>
+                <select id="sit_lab" name="SIT_LAB" required>
+                    <option value="">Seleccionar ...</option>
+                    <?php foreach (SIT_LAB as $key => $val): ?>
+                        <option value="<?php echo esc_attr($key); ?>"
+                            <?php selected($key, $user_profile['SIT_LAB']); ?>>
+                            <?php echo esc_html($val); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="coimne-form-group">
-                <label for="est_civ_name">Estado civil:</label>
-                <input type="text" id="est_civ_name" name="EST_CIV_NAME" readonly
-                    value="<?php echo esc_attr($user_profile['EST_CIV_NAME']); ?>">
+                <label for="est_civ">Estado civil:</label>
+                <select id="est_civ" name="EST_CIV" required>
+                    <option value="">Seleccionar ...</option>
+                    <?php foreach (EST_CIV as $key => $val): ?>
+                        <option value="<?php echo esc_attr($key); ?>"
+                            <?php selected($key, $user_profile['EST_CIV']); ?>>
+                            <?php echo esc_html($val); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-        </fieldset>
-
-        <fieldset>
-            <legend>Cónyuge</legend>
+            <h3>Cónyuge</h3>
             <div class="coimne-form-group">
                 <label for="con_nom">Nombre:</label>
                 <input type="text" id="con_nom" name="CON_NOM" value="<?php echo esc_attr($user_profile['CON_NOM']); ?>">
@@ -143,31 +150,53 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>Formación académica</legend>
+        <fieldset id="tab3" class="tab-pane">
             <div class="coimne-form-group">
-                <label for="tit_name">Titulación:</label>
-                <input type="text" id="tit_name" name="TIT_NAME" required
-                    value="<?php echo esc_attr($user_profile['TIT_NAME']); ?>">
+                <label for="tit">Titulación:</label>
+                <select id="tit" name="TIT" required>
+                    <option value="">Seleccionar ...</option>
+                    <?php foreach (TIT as $key => $val): ?>
+                        <option value="<?php echo esc_attr($key); ?>"
+                            <?php selected($key, $user_profile['TIT']); ?>>
+                            <?php echo esc_html($val); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="coimne-form-group">
                 <label for="tit_fch">Fecha de titulación:</label>
-                <input type="text" id="tit_fch" name="TIT_FCH" value="<?php echo esc_attr($user_profile['TIT_FCH']); ?>">
+                <input type="date" id="tit_fch" name="TIT_FCH" value="<?php echo esc_attr($fch_tit); ?>">
             </div>
             <div class="coimne-form-group">
-                <label for="esc_min_name">Escuela de titulación:</label>
-                <input type="text" id="esc_min_name" name="ESC_MIN_NAME" value="<?php echo esc_attr($user_profile['ESC_MIN_NAME']); ?>">
+                <label for="esc_min">Escuela de titulación:</label>
+                <select id="esc_min" name="ESC_MIN">
+                    <option value="">Seleccionar ...</option>
+                    <?php foreach ($escuelas['data'] as $escuela): ?>
+                        <option value="<?php echo esc_attr($escuela['ID']); ?>"
+                            <?php selected($escuela['ID'], $user_profile['ESC_MIN']); ?>>
+                            <?php echo esc_html($escuela['NAME']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="coimne-form-group">
-                <label for="ts_prl_name">Tec. Sup. Prev. Riesgos Laborales:</label>
-                <input type="text" id="ts_prl_name" name="TS_PRL_NAME" value="<?php echo esc_attr($user_profile['TS_PRL_NAME']); ?>">
+                <label for="ts_prl">Tec. Sup. Prev. Riesgos Laborales:</label>
+                <select id="ts_prl" name="TS_PRL">
+                    <option value="">Seleccionar ...</option>
+                    <?php foreach (TS_PRL as $key => $val): ?>
+                        <option value="<?php echo esc_attr($key); ?>"
+                            <?php selected($key, $user_profile['TS_PRL']); ?>>
+                            <?php echo esc_html($val); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>Empresa</legend>
+        <fieldset id="tab4" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="empresa">Empresa:</label>
+                <input type="hidden" id="emp" name="EMP" value="<?php echo esc_attr($user_profile['EMP']['ID']); ?>">
                 <input type="text" id="empresa" name="EMP_NAME" value="<?php echo esc_attr($user_profile['EMP']['NAME']); ?>">
             </div>
             <div class="coimne-form-group">
@@ -189,7 +218,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <label for="emp_pai">País:</label>
                 <select id="emp_pai" name="EMP_PAI">
                     <option value="">Seleccionar país</option>
-                    <?php foreach ($countries as $country): ?>
+                    <?php foreach ($countries['data'] as $country): ?>
                         <option value="<?php echo esc_attr($country['ID']); ?>"
                             <?php selected($country['ID'], $user_profile['EMP']['PAI']); ?>>
                             <?php echo esc_html($country['NAME']); ?>
@@ -209,7 +238,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <label for="emp_pro">Provincia:</label>
                 <select id="emp_pro" name="EMP_PRO">
                     <option value="">Seleccionar provincia</option>
-                    <?php foreach ($provinces as $province): ?>
+                    <?php foreach ($provinces['data'] as $province): ?>
                         <option value="<?php echo esc_attr($province['ID']); ?>"
                             <?php selected($province['ID'], $user_profile['EMP']['PRO']); ?>>
                             <?php echo esc_html($province['NAME']); ?>
@@ -222,7 +251,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
                 <label for="emp_pob">Población:</label>
                 <select id="emp_pob" name="EMP_POB">
                     <option value="">Seleccionar población</option>
-                    <?php foreach ($towns as $town): ?>
+                    <?php foreach ($towns['data'] as $town): ?>
                         <option value="<?php echo esc_attr($town['ID']); ?>"
                             <?php selected($town['ID'], $user_profile['EMP']['POB']); ?>>
                             <?php echo esc_html($town['NAME']); ?>
@@ -247,8 +276,7 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>Datos de Pago</legend>
+        <fieldset id="tab5" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="iban">IBAN:</label>
                 <input type="text" id="iban" name="IBAN"
@@ -265,4 +293,5 @@ $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
         <span id="coimne-profile-loader" class="coimne-loader" style="display: none;"></span>
         <span id="coimne-profile-message"></span>
     </form>
+</div>
 </div>

@@ -13,7 +13,6 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-session.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-api.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-menu.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-dashboard.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-user.php';
 
 // Cargar elementos del frontend
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-shortcodes.php';

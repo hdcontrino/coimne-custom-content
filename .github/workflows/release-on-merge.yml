@@ -37,3 +37,19 @@ jobs:
           draft: false
           prerelease: false
           files: coimne-custom-content.zip
+
+      - name: Wait for GitHub Release
+        run: sleep 10
+
+      - name: Create vendor ZIP
+        run: |
+          mkdir -p vendor
+          composer install --no-dev --optimize-autoloader
+          zip -r vendor.zip vendor
+
+      - name: Upload vendor.zip to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.PLUGIN_VERSION }}
+          files: vendor.zip
+          

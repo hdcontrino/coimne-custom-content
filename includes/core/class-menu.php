@@ -8,26 +8,24 @@ class Coimne_Menu
 {
     public static function display_dashboard_menu()
     {
-        $coimneAPI = new Coimne_API();
-        $user_data = $coimneAPI->userData;
-        $template_path = plugin_dir_path(__FILE__) . '../../templates/dashboard-menu.php';
-        
-        if ($user_data && file_exists($template_path)) {
-            $user_type = $user_data['tip'];
+        $api = new Coimne_API();
+        $template_path = plugin_dir_path(__FILE__);
 
-            $menu_location = null;
-            $menu_avatar_url = Coimne_Helper::asset_url('img/default-avatar.png');
-            $saludo = sprintf(__('¡Hola, %s!', 'coimne-custom-content'), $user_data['cttName']);
+        $user_type = strtolower($api->userData['tip']);
+        $template_path .= "../../templates/dashboard-parts/menu-$user_type.php";
 
-            if ($user_type === 'A') {
-                $menu_location = 'students_dashboard';
-            } elseif ($user_type === 'C' || $user_type === 'O') {
-                $menu_location = 'collegiate_dashboard';
-            }
-
-            include $template_path;
-        } else {
-            echo '<p>' . __('', 'coimne-custom-content') . '</p>';
+        if (!file_exists($template_path)) {
+            echo self::menu_not_found();
         }
+        
+        $menu_avatar_url = Coimne_Helper::asset_url('img/default-avatar.png');
+        $saludo = sprintf(__('¡Hola, %s!', 'coimne-custom-content'), $api->userData['cttName']);
+
+        include $template_path;
+    }
+
+    private static function menu_not_found()
+    {
+        return '<p>' . __('Error: No se encontró el menú.', 'coimne-custom-content') . '</p>';
     }
 }

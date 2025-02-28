@@ -6,23 +6,40 @@ const coimneDashboard = {
     init: function () {
         this.profile.init();
         this.projects.init();
-        // Agregar aquí futuras secciones del dashboard
+        this.account.init();
     },
 
     profile: {
         init: function () {
             this.form = document.getElementById("profile-form");
+            const tabLinks = document.querySelectorAll(".tab-link");
+            const tabPanes = document.querySelectorAll(".tab-pane");
+
             this.country = document.getElementById("countries");
             this.province = document.getElementById("provinces");
             this.town = document.getElementById("towns");
+
             this.emp_pai = document.getElementById("emp_pai");
             this.emp_pro = document.getElementById("emp_pro");
             this.emp_pob = document.getElementById("emp_pob");
 
+            tabLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    tabLinks.forEach(link => link.classList.remove("active"));
+                    tabPanes.forEach(pane => pane.classList.remove("active"));
+
+                    const tabId = this.getAttribute("data-tab");
+                    document.getElementById(tabId).classList.add("active");
+                    this.classList.add("active");
+                });
+            });
+
             if (this.form) {
                 this.form.addEventListener("submit", this.submit);
+
                 this.country.addEventListener("change", this.countryChange);
                 this.province.addEventListener("change", this.provinceChange);
+
                 this.emp_pai.addEventListener("change", this.empPaiChange);
                 this.emp_pro.addEventListener("change", this.empProChange);
             }
@@ -136,11 +153,11 @@ const coimneDashboard = {
                         profileMessage.textContent = "Perfil actualizado correctamente.";
                         profileMessage.style.color = 'green';
                     } else {
-                        profileMessage.textContent = "Error: " + data.message;
+                        profileMessage.textContent = data.message;
                         profileMessage.style.color = 'red';
                     }
                 })
-                .catch(error => console.error("Error:", error))
+                .catch(error => console.error(error))
                 .finally(() => {
                     submitButton.disabled = false;
                     submitButton.innerHTML = submitButtonOriginalContent;
@@ -153,6 +170,58 @@ const coimneDashboard = {
         init: function () {
             console.log("Inicializando sección de proyectos...");
             // Aquí irán las funciones específicas de proyectos cuando se implementen
+        }
+    },
+
+    account: {
+        init: function () {
+            this.form = document.getElementById("account-form");
+
+            if (this.form) {
+                this.form.addEventListener("submit", this.submit);
+            }
+        },
+
+        submit: function (e) {
+            e.preventDefault();
+
+            const submitButton = document.getElementById('coimne-account-submit');
+            const accountMessage = document.getElementById('coimne-account-message');
+            const loader = document.getElementById('coimne-account-loader');
+            const password = document.getElementById('password');
+            const newpassword = document.getElementById('new_password');
+            const submitButtonOriginalContent = submitButton.innerHTML;
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Guardando...";
+            accountMessage.textContent = "";
+            loader.style.display = "inline-block";
+
+            const formData = new FormData(coimneDashboard.account.form);
+            formData.append("action", "coimne_set_user_account");
+
+            fetch(coimneDashboardData.ajaxUrl, {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        accountMessage.textContent = "Acceso actualizado correctamente.";
+                        accountMessage.style.color = 'green';
+                    } else {
+                        accountMessage.textContent = data.message;
+                        accountMessage.style.color = 'red';
+                    }
+                })
+                .catch(error => console.error(error))
+                .finally(() => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = submitButtonOriginalContent;
+                    loader.style.display = "none";
+                    password.value = '';
+                    newpassword.value = '';
+                });
         }
     }
 };

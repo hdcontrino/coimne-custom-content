@@ -14,11 +14,17 @@ class Coimne_Ajax
         add_action('wp_ajax_coimne_logout', [$this, 'handle_logout']);
         add_action('wp_ajax_nopriv_coimne_logout', [$this, 'handle_logout']);
 
+        add_action('wp_ajax_coimne_forgot_password', [$this, 'forgot_password']);
+        add_action('wp_ajax_nopriv_coimne_forgot_password', [$this, 'forgot_password']);
+
         add_action('wp_ajax_coimne_get_dynamic_content', [$this, 'get_dynamic_content']);
         add_action('wp_ajax_nopriv_coimne_get_dynamic_content', [$this, 'get_dynamic_content']);
 
         add_action('wp_ajax_coimne_set_user_profile', [$this, 'set_user_profile']);
         add_action('wp_ajax_nopriv_coimne_set_user_profile', [$this, 'set_user_profile']);
+
+        add_action('wp_ajax_coimne_set_user_account', [$this, 'set_user_account']);
+        add_action('wp_ajax_nopriv_coimne_set_user_account', [$this, 'set_user_account']);
 
         add_action('wp_ajax_coimne_get_provinces', [$this, 'get_provinces']);
         add_action('wp_ajax_nopriv_coimne_get_provinces', [$this, 'get_provinces']);
@@ -39,7 +45,6 @@ class Coimne_Ajax
 
         $api = new Coimne_API();
 
-        // Validar reCAPTCHA
         $recaptcha_response = sanitize_text_field($_POST['g-recaptcha-response']);
         $recaptcha_validation = $api->verify_recaptcha($recaptcha_response);
 
@@ -65,7 +70,6 @@ class Coimne_Ajax
             wp_die();
         }
 
-        // Si la autenticación fue exitosa, guardamos el token y los datos en la sesión
         if (isset($response['token']) && isset($response['user'])) {
             $session = new Coimne_Session();
             $session->set_session('coimne_token', $response['token']);
@@ -101,6 +105,15 @@ class Coimne_Ajax
 
         wp_die();
     }
+
+    public function forgot_password()
+    {
+        $api = new Coimne_API();
+        $response = $api->forgot_password($_POST);
+
+        wp_send_json($response);
+        wp_die();
+    }
     
     public function get_dynamic_content()
     {
@@ -108,15 +121,17 @@ class Coimne_Ajax
             wp_send_json_error(['message' => __('Solicitud inválida.', 'coimne-custom-content')]);
         }
 
-        $content_type = sanitize_text_field($_GET['content']);
-        $template_path = COIMNE_CUSTOM_CONTENT_DIR . "templates/dashboard-{$content_type}.php";
+        ob_start();
 
-        if (!file_exists($template_path)) {
-            wp_send_json_error(['message' => __('El contenido solicitado no existe.', 'coimne-custom-content')]);
+        $content_type = sanitize_text_field($_GET['content']);
+        $method = "display_dashboard_{$content_type}";
+
+        if (method_exists('Coimne_Dashboard', $method)) {
+            Coimne_Dashboard::$method();
+        } else {
+            wp_send_json_error(['message' => __('Método no encontrado.', 'coimne-custom-content')]);
         }
 
-        ob_start();
-        include $template_path;
         $content = ob_get_clean();
 
         wp_send_json_success(['content' => $content]);
@@ -126,6 +141,15 @@ class Coimne_Ajax
     {
         $api = new Coimne_API();
         $response = $api->set_user_profile($_POST);
+
+        wp_send_json($response);
+        wp_die();
+    }
+
+    public function set_user_account()
+    {
+        $api = new Coimne_API();
+        $response = $api->set_user_account($_POST);
 
         wp_send_json($response);
         wp_die();

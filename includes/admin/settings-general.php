@@ -46,7 +46,7 @@ function coimne_display_shortcodes()
             <li><code>[coimne_login]</code> - <?php _e('Muestra el formulario de inicio de sesión.', 'coimne-custom-content'); ?></li>
             <li><code>[coimne_dashboard]</code> - <?php _e('Muestra el panel de control del usuario logueado.', 'coimne-custom-content'); ?></li>
             <li><code>[coimne_dashboard_menu]</code> - <?php _e('Muestra menú del panel de control.', 'coimne-custom-content'); ?></li>
-            <li><code>[coimne_user_data]</code> - <?php _e('Muestra los datos del usuario logueado.', 'coimne-custom-content'); ?></li>
+            <li><code>[coimne_dashboard_profile]</code> - <?php _e('Muestra la sección de perfil del usuario logueado.', 'coimne-custom-content'); ?></li>
             <!-- Agrega más shortcodes aquí si es necesario -->
         </ul>
     </div>
