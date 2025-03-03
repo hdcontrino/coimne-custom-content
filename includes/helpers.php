@@ -38,4 +38,20 @@ class Coimne_Helper
         $dateTime = DateTime::createFromFormat('Y-m-d', $date);
         return $dateTime ? $dateTime->format('d-m-Y') : '';
     }
+
+    public static function in_the_builder()
+    {
+        return is_admin() 
+            || (defined('ET_BUILDER_PLUGIN_ACTIVE') && ET_BUILDER_PLUGIN_ACTIVE) 
+            || (function_exists('et_core_is_builder_active') && et_core_is_builder_active()) 
+            || (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['et_fb']))
+            || (isset($_GET['et_fb']) && $_GET['et_fb'] == 1)
+            || !empty($_GET['et_pb_preview']);
+    }
+
+    public static function hidden_shortcode_notice($name = '')
+    {
+        $styles = "display: flex;justify-content: center;padding: 20px;border: 1px dashed #ccc;font-size: 18px;align-items: center;";
+        return "<div style='$styles'><span class='dashicons dashicons-layout'></span> COIMNE $name Shortcode</div>";
+    }
 }

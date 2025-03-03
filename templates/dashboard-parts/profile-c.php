@@ -1,5 +1,11 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 
+<?php
+$fch_nac = Coimne_Helper::format_date_to_input($user_profile['FCH_NAC'] ?? '');
+$fch_tit = Coimne_Helper::format_date_to_input($user_profile['TIT_FCH'] ?? '');
+$escuelas = $api->get_escuelas();
+?>
+
 <div class="coimne-dashboard-info">
     <div>
         <span>Colegiado Nº<?php echo esc_attr($user_profile['NUM_COL']); ?></span>

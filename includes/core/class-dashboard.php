@@ -26,10 +26,7 @@ class Coimne_Dashboard
         $countries = $api->get_countries();
         $provinces = $api->get_provinces($user_profile['PAI']);
         $towns = $api->get_towns($user_profile['PAI'], $user_profile['PRO']);
-        $fch_nac = Coimne_Helper::format_date_to_input($user_profile['FCH_NAC'] ?? '');
         $emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
-        $fch_tit = Coimne_Helper::format_date_to_input($user_profile['TIT_FCH'] ?? '');
-        $escuelas = $api->get_escuelas();
 
         $user_type = strtolower($api->userData['tip']);
         $template_path = plugin_dir_path(__FILE__);

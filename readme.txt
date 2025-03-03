@@ -41,6 +41,19 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.6 =
+- Se mejoró la compatibilidad con constructores visuales, creando el método `Coimne_Helper::in_the_builder()` para detectar entornos de edición y evitar la ejecución de shortcodes en el backend.
+- Se implementó `Coimne_Helper::hidden_shortcode_notice()` para mostrar una vista previa de los shortcodes en los constructores en lugar de ejecutar el contenido real.
+- Se refactorizaron los shortcodes del dashboard (`dashboard_shortcode`, `dashboard_menu_shortcode`, `dashboard_profile_shortcode`) para utilizar `Coimne_Helper::in_the_builder()`.
+- Se corrigió el posicionamiento de `.coimne-dashboard-info`, asegurando una alineación adecuada con `align-items: flex-start;`.
+- Se eliminaron estilos innecesarios en `.coimne-login-card` para mejorar la integración del formulario de login.
+- Se optimizó la carga de datos en `class-dashboard.php`, eliminando la conversión innecesaria de fechas y llamadas redundantes a la API.
+- Se implementaron pestañas en el formulario de perfil dentro del dashboard, facilitando la navegación entre secciones.
+- Se añadieron nuevas plantillas en `templates/dashboard-parts/` con mejoras en la presentación de la información del usuario.
+- Se creó la plantilla `account-e.php` y `account-o.php` para permitir la actualización de credenciales del usuario.
+- Se optimizó la gestión de países, provincias y poblaciones en el perfil del usuario, mejorando la carga dinámica de datos.
+- Se corrigieron problemas con la inicialización de eventos en `coimne-dashboard.js`, evitando pérdidas tras la carga dinámica de contenido.
+
 = 1.0.5 =
 - Reestructuración del dashboard, permitiendo la carga dinámica de sus secciones.
 - Implementación de pestañas en el formulario de perfil para mejorar la navegación.

@@ -34,10 +34,8 @@ class Coimne_Shortcodes
 
     public function dashboard_shortcode()
     {
-        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
-            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
-                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
-                </div>';
+        if (Coimne_Helper::in_the_builder()) {
+            return Coimne_Helper::hidden_shortcode_notice('Dashboard');
         }
         
         wp_enqueue_style('coimne-dashboard-styles', Coimne_Helper::asset_url('css/coimne-dashboard.css'));
@@ -54,10 +52,8 @@ class Coimne_Shortcodes
 
     public function dashboard_menu_shortcode()
     {
-        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
-            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
-                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
-                </div>';
+        if (Coimne_Helper::in_the_builder()) {
+            return Coimne_Helper::hidden_shortcode_notice('Dashboard Menu');
         }
 
         wp_enqueue_style('coimne-menu-styles', Coimne_Helper::asset_url('css/coimne-menu.css'));
@@ -74,10 +70,8 @@ class Coimne_Shortcodes
 
     public function dashboard_profile_shortcode()
     {
-        if (is_admin() || (function_exists('et_core_is_builder_active') && et_core_is_builder_active())) {
-            return '<div style="text-align: center; padding: 20px; border: 1px dashed #ccc; font-size: 18px;">
-                    <span class="dashicons dashicons-layout"></span> Shortcode oculto en el editor
-                </div>';
+        if (Coimne_Helper::in_the_builder()) {
+            return Coimne_Helper::hidden_shortcode_notice('Dashboard Profile');
         }
         
         ob_start();

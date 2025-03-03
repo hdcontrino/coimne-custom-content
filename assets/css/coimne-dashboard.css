@@ -74,6 +74,7 @@
 .coimne-dashboard-info {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 }
 
 .coimne-tabs {
