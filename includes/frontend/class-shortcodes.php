@@ -3,17 +3,25 @@ class Coimne_Shortcodes
 {
     public function __construct()
     {
-        add_shortcode('coimne_login', [$this, 'render_login_form']);
+        add_shortcode('coimne_login_btn', [$this, 'coimne_login_btn_shortcode']);
+        add_shortcode('coimne_login_form', [$this, 'coimne_login_form_shortcode']);
+
         add_shortcode('coimne_dashboard', [$this, 'dashboard_shortcode']);
         add_shortcode('coimne_dashboard_menu', [$this, 'dashboard_menu_shortcode']);
         add_shortcode('coimne_dashboard_profile', [$this, 'dashboard_profile_shortcode']);
     }
 
-    public function render_login_form()
+    public function coimne_login_btn_shortcode()
     {
-        $recaptcha_site_key = get_option('coimne_recaptcha_site_key', '');
-        $recaptcha_enabled = !empty($recaptcha_site_key);
-        $redirect_url = get_option('coimne_redirect_url', site_url('/dashboard'));
+        ob_start();
+        Coimne_Login::display_login_button();
+        return ob_get_clean();
+    }
+
+    public function coimne_login_form_shortcode()
+    {
+        $recaptcha_site_key = get_option(COIMNE_OPTION_RECAPTCHA_SITE_KEY, '');
+        $dashboard_url = get_option(COIMNE_OPTION_DASHBOARD_URL, site_url('/dashboard'));
 
         wp_enqueue_style('coimne-login-styles', Coimne_Helper::asset_url('css/coimne-login.css'));
         wp_enqueue_script('coimne-login-script', Coimne_Helper::asset_url('js/coimne-login.js'), [], false, true);
@@ -21,14 +29,14 @@ class Coimne_Shortcodes
 
         wp_localize_script('coimne-login-script', 'coimneLoginData', [
             'ajaxUrl' => esc_url(admin_url('admin-ajax.php')),
-            'recaptchaEnabled' => $recaptcha_enabled,
+            'recaptchaEnabled' => !empty($recaptcha_site_key),
             'recaptchaSiteKey' => esc_attr($recaptcha_site_key),
-            'redirectUrl' => esc_url($redirect_url),
+            'dashboardUrl' => esc_url($dashboard_url),
             'errorMessage' => __('Error: No se puede iniciar sesión porque el reCAPTCHA no está configurado.', 'coimne-custom-content')
         ]);
 
         ob_start();
-        include COIMNE_CUSTOM_CONTENT_DIR . 'templates/login-form.php';
+        Coimne_Login::display_login_form();
         return ob_get_clean();
     }
 

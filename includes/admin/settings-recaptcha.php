@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
 
 function coimne_register_recaptcha_settings()
 {
-    register_setting('coimne_settings_group_recaptcha', 'coimne_recaptcha_site_key');
-    register_setting('coimne_settings_group_recaptcha', 'coimne_recaptcha_secret_key');
+    register_setting('coimne_settings_group_recaptcha', COIMNE_OPTION_RECAPTCHA_SITE_KEY);
+    register_setting('coimne_settings_group_recaptcha', COIMNE_OPTION_RECAPTCHA_SECRET_KEY);
 
     add_settings_section(
         'coimne_recaptcha_section',
@@ -17,7 +17,7 @@ function coimne_register_recaptcha_settings()
     );
 
     add_settings_field(
-        'coimne_recaptcha_site_key',
+        COIMNE_OPTION_RECAPTCHA_SITE_KEY,
         __('Clave del sitio', 'coimne-custom-content'),
         'coimne_recaptcha_site_key_callback',
         'coimne-settings-recaptcha',
@@ -25,7 +25,7 @@ function coimne_register_recaptcha_settings()
     );
 
     add_settings_field(
-        'coimne_recaptcha_secret_key',
+        COIMNE_OPTION_RECAPTCHA_SECRET_KEY,
         __('Clave secreta', 'coimne-custom-content'),
         'coimne_recaptcha_secret_key_callback',
         'coimne-settings-recaptcha',
@@ -35,12 +35,18 @@ function coimne_register_recaptcha_settings()
 
 function coimne_recaptcha_site_key_callback()
 {
-    $recaptcha_site_key = get_option('coimne_recaptcha_site_key', '');
-    echo "<input type='text' name='coimne_recaptcha_site_key' value='" . esc_attr($recaptcha_site_key) . "' class='regular-text'>";
+    $recaptcha_site_key = get_option(COIMNE_OPTION_RECAPTCHA_SITE_KEY, '');
+?> 
+    <input type="text" name="<?php echo COIMNE_OPTION_RECAPTCHA_SITE_KEY; ?>" 
+        value="<?php echo esc_attr($recaptcha_site_key); ?>" class="regular-text">
+<?php
 }
 
 function coimne_recaptcha_secret_key_callback()
 {
-    $recaptcha_secret_key = get_option('coimne_recaptcha_secret_key', '');
-    echo "<input type='text' name='coimne_recaptcha_secret_key' value='" . esc_attr($recaptcha_secret_key) . "' class='regular-text'>";
+    $recaptcha_secret_key = get_option(COIMNE_OPTION_RECAPTCHA_SECRET_KEY, '');
+?> 
+    <input type="text" name="<?php echo COIMNE_OPTION_RECAPTCHA_SECRET_KEY; ?>" 
+        value="<?php esc_attr($recaptcha_secret_key); ?>" class="regular-text">
+<?php
 }

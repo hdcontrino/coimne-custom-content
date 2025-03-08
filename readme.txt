@@ -41,6 +41,20 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.7 =
+* Mejoras en el diseño responsivo del formulario en el dashboard.
+* Corrección de clases y estilos en los formularios para mejorar la alineación y distribución de los campos.
+* Se actualizó el proceso de autenticación para que use `coimne_login_form` en lugar de `coimne_login`.
+* Se corrigió la redirección después del login para que utilice `dashboardUrl` en lugar de `redirectUrl`.
+* Se refactorizó el sistema de configuración, reemplazando nombres de opciones de configuración con constantes (`COIMNE_OPTION_*`).
+* Se optimizó la estructura de los shortcodes, agregando `[coimne_login_btn]` para mostrar el botón de login.
+* Se reorganizó la estructura de archivos del plugin para mejorar la mantenibilidad.
+* Se implementó `throwError()` en `Coimne_API` para manejar errores de API de forma más consistente.
+* Se agregó soporte para obtener localidades (`get_locs()`) en el perfil del usuario.
+* Se corrigieron errores en la estructura del menú de WordPress en `class-menu.php`.
+* Se mejoró la validación de reCAPTCHA en el formulario de login.
+* Se actualizaron las rutas de las plantillas en el dashboard para una mayor coherencia.
+
 = 1.0.6 =
 - Se mejoró la compatibilidad con constructores visuales, creando el método `Coimne_Helper::in_the_builder()` para detectar entornos de edición y evitar la ejecución de shortcodes en el backend.
 - Se implementó `Coimne_Helper::hidden_shortcode_notice()` para mostrar una vista previa de los shortcodes en los constructores en lugar de ejecutar el contenido real.

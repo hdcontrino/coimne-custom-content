@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loader.style.display = "inline-block";
 
         const formData = new FormData();
-        formData.append('action', 'coimne_login');
+        formData.append('action', 'coimne_login_form');
         formData.append('username', document.getElementById('coimne-username').value);
         formData.append('password', document.getElementById('coimne-password').value);
         formData.append('g-recaptcha-response', grecaptcha.getResponse());
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = data.redirect ? data.redirect : coimneLoginData.redirectUrl;
+                    window.location.href = data.redirect ? data.redirect : coimneLoginData.dashboardUrl;
                 } else {
                     loginMessage.textContent = data.message;
                     loginMessage.style.color = 'red';

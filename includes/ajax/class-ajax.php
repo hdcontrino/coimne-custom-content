@@ -8,8 +8,8 @@ class Coimne_Ajax
 {
     public function __construct()
     {
-        add_action('wp_ajax_coimne_login', [$this, 'handle_login']);
-        add_action('wp_ajax_nopriv_coimne_login', [$this, 'handle_login']);
+        add_action('wp_ajax_coimne_login_form', [$this, 'handle_login']);
+        add_action('wp_ajax_nopriv_coimne_login_form', [$this, 'handle_login']);
 
         add_action('wp_ajax_coimne_logout', [$this, 'handle_logout']);
         add_action('wp_ajax_nopriv_coimne_logout', [$this, 'handle_logout']);

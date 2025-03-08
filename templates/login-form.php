@@ -1,5 +1,9 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 
+<?php
+$recaptcha_site_key = get_option(COIMNE_OPTION_RECAPTCHA_SITE_KEY, '');
+?>
+
 <div class="coimne-login-container">
     <!-- Lado del Login -->
     <div class="coimne-login-card front">
@@ -11,7 +15,7 @@
             <input type="password" id="coimne-password" name="password" required>
 
             <!-- reCAPTCHA -->
-            <?php if ($recaptcha_enabled) : ?>
+            <?php if (!empty($recaptcha_site_key)) : ?>
                 <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($recaptcha_site_key); ?>"></div>
             <?php else : ?>
                 <p class="coimne-error-message">
@@ -19,7 +23,7 @@
                 </p>
             <?php endif; ?>
 
-            <button id="coimne-login-submit" type="submit" <?php echo !$recaptcha_enabled ? 'disabled' : ''; ?>>
+            <button id="coimne-login-submit" type="submit" <?php echo empty($recaptcha_site_key) ? 'disabled' : ''; ?>>
                 <?php _e('Ingresar', 'coimne-custom-content'); ?>
             </button>
             <span id="coimne-login-loader" class="coimne-loader" style="display: none;"></span>

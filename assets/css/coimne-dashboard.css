@@ -121,3 +121,26 @@
         width: 100%;
     }
 }
+
+@media (min-width: 1140px) {
+    .coimne-form-row {
+        display: flex;
+    }
+    
+    .coimne-form-row .coimne-form-group:not(:first-child) {
+        padding-left: 10px;
+    }
+    
+    .coimne-form-row .coimne-form-group:not(:last-child) {
+        padding-right: 10px;
+    }
+    
+    .coimne-form-group {
+        flex-grow: 1;
+        width: 33%;
+    }
+    
+    .coimne-form-group.w1\/3 {
+        max-width: 33.33%;
+    }
+}

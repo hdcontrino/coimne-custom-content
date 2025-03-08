@@ -11,12 +11,13 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/constants.php';
 // Cargar funcionalidades principales
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-session.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-api.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-menu.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-dashboard.php';
-
-// Cargar elementos del frontend
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-shortcodes.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-widgets.php';
+
+// Cargar elementos del frontend
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-login.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-menu.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-dashboard.php';
 
 // Cargar AJAX
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/ajax/class-ajax.php';

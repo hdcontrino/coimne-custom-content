@@ -8,7 +8,7 @@ class Coimne_Widgets extends WP_Widget
 
     public function widget($args, $instance)
     {
-        echo do_shortcode('[coimne_login]');
+        echo do_shortcode('[coimne_login_form]');
     }
 }
 

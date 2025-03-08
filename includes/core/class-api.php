@@ -13,11 +13,13 @@ class Coimne_API
     private $session;
     private $ssl_verify;
 
+    private $unknownError = 'Error desconocido.';
+
     public function __construct()
     {
-        $this->api_url = get_option('coimne_api_url', '');
+        $this->api_url = get_option(COIMNE_OPTION_API_URL, '');
         $this->session = new Coimne_Session();
-        $this->ssl_verify = get_option('coimne_dev_mode', false) ? false : true;
+        $this->ssl_verify = get_option(COIMNE_OPTION_DEV_MODE, false) ? false : true;
 
         if (empty($this->api_url)) {
             return [
@@ -32,7 +34,7 @@ class Coimne_API
 
     public function verify_recaptcha($recaptcha_response)
     {
-        $recaptcha_secret = get_option('coimne_recaptcha_secret_key', '');
+        $recaptcha_secret = get_option(COIMNE_OPTION_RECAPTCHA_SECRET_KEY, '');
         if (empty($recaptcha_secret)) {
             return [
                 'success' => false, 
@@ -70,14 +72,14 @@ class Coimne_API
 
     public function authenticate_user($username, $password)
     {
-        $contentBody = ['USER' => $username, 'PASS' => $password];
+        $contentBody = [
+            'USER' => $username, 
+            'PASS' => md5($password)
+        ];
         $data = $this->post('/login', $contentBody);
 
-        if (!$data['status']) {
-            return [
-                'success' => false, 
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         $this->session->set_session('coimne_user_data', $data['desc']);
@@ -97,11 +99,8 @@ class Coimne_API
         ];
         $data = $this->post('/forgotPass', $contentBody);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -180,11 +179,8 @@ class Coimne_API
         ];
         $data = $this->post('/Perfil', $contentBody);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -213,28 +209,22 @@ class Coimne_API
             ];
             $data = $this->post('/ChangeUser', $contentBody);
 
-            if (!$data['status']) {
-                return [
-                    'success' => false,
-                    'message' => $data['desc']['error']
-                ];
+            if (!isset($data['status']) || !$data['status']) {
+                return $this->throwError($data);
             }
         }
 
         if ($password_changes && $accountData['PASS']) {
             $contentBody = [
                 'CTT_ID' => $this->userData['cttId'],
-                'PASS' => $accountData['PASS'],
-                'NEWPASS' => $accountData['NEWPASS'],
+                'PASS' => md5($accountData['PASS']),
+                'NEWPASS' => md5($accountData['NEWPASS']),
                 'USER' => $accountData['USERNAME'],
             ];
             $data = $this->post('/ChangePass', $contentBody);
 
-            if (!$data['status']) {
-                return [
-                    'success' => false,
-                    'message' => $data['desc']['error']
-                ];
+            if (!isset($data['status']) || !$data['status']) {
+                return $this->throwError($data);
             }
         }
         
@@ -252,11 +242,8 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -273,11 +260,28 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => !empty($data['desc']['list']),
+            'data' => $data['desc']['list']
+        ];
+    }
+
+    public function get_locs($countryId, $provinceId, $zipId = 0)
+    {
+        $endpoint = "/Localidades";
+        $user_id = $this->userData['cttId'] ?: 0;
+        $params = "?CTT_ID=$user_id&PAI=$countryId&PRO=$provinceId";
+
+        if ($zipId) $params .= "&CP=$zipId";
+
+        $data = $this->get($endpoint . $params);
+
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -296,11 +300,8 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -317,16 +318,27 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data['status']) {
-            return [
-                'success' => false,
-                'message' => $data['desc']['error']
-            ];
+        if (!isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
             'success' => !empty($data['desc']['list']),
             'data' => $data['desc']['list']
+        ];
+    }
+
+    private function throwError($data)
+    {
+        $message = __($this->unknownError, 'coimne-custom-content');
+
+        if (isset($data['desc']) && isset($data['desc']['error'])) {
+            $message = $data['desc']['error'];
+        }
+
+        return [
+            'success' => false,
+            'message' => $message,
         ];
     }
 
@@ -349,7 +361,7 @@ class Coimne_API
         if (!$body || !isset($data['status'])) {
             return [
                 'success' => false,
-                'message' => __('Error desconocido.', 'coimne-custom-content')
+                'message' => $this->unknownError
             ];
         }
 

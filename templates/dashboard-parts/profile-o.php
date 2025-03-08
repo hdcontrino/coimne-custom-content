@@ -24,60 +24,79 @@
         <input type="hidden" name="action" value="set_user_profile">
 
         <fieldset id="tab1" class="tab-pane active">
-            <div class="coimne-form-group">
-                <label for="countries">País:</label>
-                <select id="countries" name="PAI">
-                    <option value="">Seleccionar país</option>
-                    <?php foreach ($countries['data'] as $country): ?>
-                        <option value="<?php echo esc_attr($country['ID']); ?>"
-                            <?php selected($country['ID'], $user_profile['PAI']); ?>>
-                            <?php echo esc_html($country['NAME']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="dir">Dirección:</label>
+                    <input type="text" id="dir" name="DIR" value="<?php echo esc_attr($user_profile['DIR']); ?>">
+                </div>
+                <div class="coimne-form-group w1/3">
+                    <label for="cps">Código Postal:</label>
+                    <input type="text" id="cps" name="CPS" value="<?php echo esc_attr($user_profile['CPS']); ?>">
+                </div>
             </div>
-            <div class="coimne-form-group">
-                <label for="dir">Dirección:</label>
-                <input type="text" id="dir" name="DIR" value="<?php echo esc_attr($user_profile['DIR']); ?>">
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="countries">País:</label>
+                    <select id="countries" name="PAI">
+                        <option value="">Seleccionar país</option>
+                        <?php foreach ($countries['data'] as $country): ?>
+                            <option value="<?php echo esc_attr($country['ID']); ?>"
+                                <?php selected($country['ID'], $user_profile['PAI']); ?>>
+                                <?php echo esc_html($country['NAME']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="coimne-form-group">
+                    <label for="provinces">Provincia:</label>
+                    <select id="provinces" name="PRO">
+                        <option value="">Seleccionar provincia</option>
+                        <?php foreach ($provinces['data'] as $province): ?>
+                            <option value="<?php echo esc_attr($province['ID']); ?>"
+                                <?php selected($province['ID'], $user_profile['PRO']); ?>>
+                                <?php echo esc_html($province['NAME']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <span class="coimne-loader"></span>
+                </div>
+                <div class="coimne-form-group">
+                    <label for="locs">Localidad:</label>
+                    <select id="locs" name="LOC">
+                        <option value="">Seleccionar municipio</option>
+                        <?php foreach ($locs['data'] as $loc): ?>
+                            <option value="<?php echo esc_attr($loc['ID']); ?>"
+                                <?php selected($loc['ID'], $user_profile['LOC']); ?>>
+                                <?php echo esc_html($loc['NAME']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <span class="coimne-loader"></span>
+                </div>
             </div>
-            <div class="coimne-form-group">
-                <label for="cps">Código Postal:</label>
-                <input type="text" id="cps" name="CPS" value="<?php echo esc_attr($user_profile['CPS']); ?>">
-            </div>
-            <div class="coimne-form-group">
-                <label for="provinces">Provincia:</label>
-                <select id="provinces" name="PRO">
-                    <option value="">Seleccionar provincia</option>
-                    <?php foreach ($provinces['data'] as $province): ?>
-                        <option value="<?php echo esc_attr($province['ID']); ?>"
-                            <?php selected($province['ID'], $user_profile['PRO']); ?>>
-                            <?php echo esc_html($province['NAME']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <span class="coimne-loader"></span>
-            </div>
-            <div class="coimne-form-group">
-                <label for="towns">Población:</label>
-                <select id="towns" name="POB">
-                    <option value="">Seleccionar población</option>
-                    <?php foreach ($towns['data'] as $town): ?>
-                        <option value="<?php echo esc_attr($town['ID']); ?>"
-                            <?php selected($town['ID'], $user_profile['POB']); ?>>
-                            <?php echo esc_html($town['NAME']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <span class="coimne-loader"></span>
-            </div>
-            <div class="coimne-form-group">
-                <label for="phone">Teléfono:</label>
-                <input type="text" id="phone" name="TFN" value="<?php echo esc_attr($user_profile['TFN']); ?>">
-            </div>
-            <div class="coimne-form-group">
-                <label for="mobile">Móvil:</label>
-                <input type="text" id="mobile" name="TFN_MOV"
-                    value="<?php echo esc_attr($user_profile['TFN_MOV']); ?>">
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="towns">Municipio:</label>
+                    <select id="towns" name="POB">
+                        <option value="">Seleccionar municipio</option>
+                        <?php foreach ($towns['data'] as $town): ?>
+                            <option value="<?php echo esc_attr($town['ID']); ?>"
+                                <?php selected($town['ID'], $user_profile['POB']); ?>>
+                                <?php echo esc_html($town['NAME']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <span class="coimne-loader"></span>
+                </div>
+                <div class="coimne-form-group">
+                    <label for="phone">Teléfono:</label>
+                    <input type="text" id="phone" name="TFN" value="<?php echo esc_attr($user_profile['TFN']); ?>">
+                </div>
+                <div class="coimne-form-group">
+                    <label for="mobile">Móvil:</label>
+                    <input type="text" id="mobile" name="TFN_MOV"
+                        value="<?php echo esc_attr($user_profile['TFN_MOV']); ?>">
+                </div>
             </div>
             <div class="coimne-form-group" style="display: none;">
                 <label for="email">Email:</label>
