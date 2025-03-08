@@ -3,10 +3,10 @@ Contributors: hdcontrino
 Author: Daniel Contrino
 Author URI: https://coheda.com
 Tags: login, custom content, API, widgets, shortcodes
-Requires at least: 5.0
-Tested up to: 6.4
+Requires at least: 6.0
+Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.8
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,9 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.8 =
+* Correcciones menores en el paquete de actualización para WordPress.
+
 = 1.0.7 =
 * Mejoras en el diseño responsivo del formulario en el dashboard.
 * Corrección de clases y estilos en los formularios para mejorar la alineación y distribución de los campos.

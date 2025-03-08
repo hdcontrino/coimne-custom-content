@@ -1,14 +1,15 @@
 <?php
+
 /**
  * Plugin Name: Coimne Custom Content
  * Plugin URI: https://coheda.com
  * Description: Plugin para mostrar contenido especial basado en sesiones de usuario externas.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Daniel Contrino
  * Author URI: https://coheda.com
  * License: Propietaria
- * Requires at least: 5.0
- * Tested up to: 6.4
+ * Requires at least: 6.0
+ * Tested up to: 6.7.2
  * Requires PHP: 7.4
  */
 
@@ -17,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes
-define('COIMNE_CUSTOM_CONTENT_VERSION', '1.0.7');
+define('COIMNE_CUSTOM_CONTENT_VERSION', '1.0.8');
 define('COIMNE_CUSTOM_CONTENT_DIR', plugin_dir_path(__FILE__));
 define('COIMNE_CUSTOM_CONTENT_URL', plugin_dir_url(__FILE__));
 
