@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class Coimne_Widgets extends WP_Widget
 {
     public function __construct()

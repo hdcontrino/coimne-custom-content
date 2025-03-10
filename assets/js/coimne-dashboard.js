@@ -17,10 +17,12 @@ const coimneDashboard = {
 
             this.country = document.getElementById("countries");
             this.province = document.getElementById("provinces");
+            this.loc = document.getElementById("locs");
             this.town = document.getElementById("towns");
 
             this.emp_pai = document.getElementById("emp_pai");
             this.emp_pro = document.getElementById("emp_pro");
+            this.emp_loc = document.getElementById("emp_loc");
             this.emp_pob = document.getElementById("emp_pob");
 
             tabLinks.forEach(link => {
@@ -36,10 +38,14 @@ const coimneDashboard = {
 
             if (this.form) {
                 this.form.addEventListener("submit", this.submit);
+            }
 
+            if (this.form && this.country) {
                 this.country.addEventListener("change", this.countryChange);
                 this.province.addEventListener("change", this.provinceChange);
+            }
 
+            if (this.form && this.emp_pai) {
                 this.emp_pai.addEventListener("change", this.empPaiChange);
                 this.emp_pro.addEventListener("change", this.empProChange);
             }

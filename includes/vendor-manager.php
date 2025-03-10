@@ -13,9 +13,7 @@ class Coimne_Vendor_Manager
             'NO_COMPOSER' => ["Composer no está disponible en el servidor.", 'error'],
             'VENDOR_NO_GENERADO' => ["Error crítico: vendor/autoload.php no fue generado. Es posible que Composer haya fallado.", 'error'],
             'INSTALACION_COMPOSER' => ["Instalando dependencias con Composer...", 'warning'],
-            'VENDOR_DESCARGADO' => ["vendor.zip descargado correctamente.", 'success'],
             'VENDOR_NO_DESCARGADO' => ["ERROR: No se pudo descargar vendor.zip.", 'error'],
-            'VENDOR_EXTRAIDO' => ["vendor.zip extraído correctamente.", 'success'],
             'VENDOR_NO_EXTRAIDO' => ["ERROR: No se pudo extraer vendor.zip.", 'error'],
         ];
 
@@ -123,14 +121,11 @@ class Coimne_Vendor_Manager
             return;
         }
 
-        self::manejar_error('VENDOR_DESCARGADO');
-
         $zip = new ZipArchive;
         if ($zip->open($vendor_zip) === TRUE) {
             $zip->extractTo(COIMNE_CUSTOM_CONTENT_DIR);
             $zip->close();
             unlink($vendor_zip);
-            self::manejar_error('VENDOR_EXTRAIDO');
         } else {
             self::manejar_error('VENDOR_NO_EXTRAIDO');
         }

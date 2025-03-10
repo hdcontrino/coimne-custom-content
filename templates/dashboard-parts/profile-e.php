@@ -1,8 +1,12 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 
+<?php
+$emp_dep = $user_profile['EMP_COI']['EMP_DEP_COI_EMP_NOM_ON'];
+?>
+
 <div class="coimne-dashboard-info">
     <div>
-        <span><?php echo esc_attr($user_profile['ESC_MIN_NAME']); ?></span>
+        <span><?php echo esc_attr($user_profile['COL_MIN']); ?>,</span>
         <span>Colegiado Nº<?php echo esc_attr($user_profile['NUM_COL']); ?></span>
         <br>
         <span>&nbsp;<?php echo esc_attr($user_profile['NAME']); ?></span>
@@ -111,15 +115,16 @@
         <fieldset id="tab2" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="empresa">Empresa:</label>
-                <input type="hidden" id="emp" name="EMP" value="<?php echo esc_attr($user_profile['EMP']['ID']); ?>">
-                <input type="text" id="empresa" name="EMP_NAME" value="<?php echo esc_attr($user_profile['EMP']['NAME']); ?>">
+                <input type="hidden" id="emp" name="EMP" value="<?php echo esc_attr($user_profile['EMP_COI']['ID']); ?>">
+                <input type="text" id="empresa" name="EMP_NAME" value="<?php echo esc_attr($user_profile['EMP_COI']['NAME']); ?>">
             </div>
             <div class="coimne-form-group">
                 <label for="departamento">Departamento:</label>
                 <select id="departamento" name="EMP_DEP">
+                    <option value="">Seleccionar ...</option>
                     <?php foreach ($emp_dep as $dep): ?>
                         <option value="<?php echo esc_attr($dep['ID']); ?>"
-                            <?php selected($dep['ID'], $user_profile['EMP_DEP']); ?>>
+                            <?php selected($dep['ID'], $user_profile['EMP_DEP'] ?? ''); ?>>
                             <?php echo esc_html($dep['NAME']); ?>
                         </option>
                     <?php endforeach; ?>

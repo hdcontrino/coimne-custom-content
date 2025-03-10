@@ -9,15 +9,16 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/helpers.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/constants.php';
 
 // Cargar funcionalidades principales
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-session.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-api.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-shortcodes.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-widgets.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-session.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-shortcodes.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-widgets.php';
 
 // Cargar elementos del frontend
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-login.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-menu.php';
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-dashboard.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-dashboard.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-enrollment.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-login.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-menu.php';
 
 // Cargar AJAX
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/ajax/class-ajax.php';
@@ -30,7 +31,7 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/admin/settings-recaptcha.php'
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/admin/settings-tabs.php';
 
 // Cargar la clase de manejo de vendor
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/vendor-manager.php';
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/vendor-manager.php';
 
 // Manejo de dependencias
 if (!file_exists(COIMNE_CUSTOM_CONTENT_DIR . 'vendor/autoload.php') || Coimne_Vendor_Manager::necesita_actualizar_vendor()) {

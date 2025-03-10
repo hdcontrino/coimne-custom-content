@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 class Coimne_API
 {
     public $userData;
+    public $userType;
     public $token;
 
     private $api_url;
@@ -28,8 +29,10 @@ class Coimne_API
             ];
         }
 
-        $this->userData = $this->session->get_session('coimne_user_data');
-        $this->token = $this->userData ? $this->userData['token'] : '';
+        if ($this->userData = $this->session->get_session('coimne_user_data')) {
+            $this->userType = strtolower($this->userData['tip'] ?: 'o');
+            $this->token = $this->userData ? $this->userData['token'] : '';
+        }
     }
 
     public function verify_recaptcha($recaptcha_response)
@@ -339,6 +342,7 @@ class Coimne_API
         return [
             'success' => false,
             'message' => $message,
+            'data' => []
         ];
     }
 

@@ -3,6 +3,7 @@
 <?php
 $fch_nac = Coimne_Helper::format_date_to_input($user_profile['FCH_NAC'] ?? '');
 $fch_tit = Coimne_Helper::format_date_to_input($user_profile['TIT_FCH'] ?? '');
+$emp_dep = $user_profile['EMP']['EMP_DEP_COI_EMP_NOM_ON'];
 $escuelas = $api->get_escuelas();
 ?>
 
@@ -235,6 +236,7 @@ $escuelas = $api->get_escuelas();
             <div class="coimne-form-group">
                 <label for="departamento">Departamento:</label>
                 <select id="departamento" name="EMP_DEP">
+                    <option value="">Seleccionar ...</option>
                     <?php foreach ($emp_dep as $dep): ?>
                         <option value="<?php echo esc_attr($dep['ID']); ?>"
                             <?php selected($dep['ID'], $user_profile['EMP_DEP']); ?>>

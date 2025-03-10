@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,19 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.9 =
+* Se agregó soporte para la configuración de URL de privacidad y términos y condiciones en los ajustes generales.
+* Se actualizaron las funciones `coimne_register_general_settings()` y `coimne_dashboard_url_callback()` para incluir las nuevas opciones de URL de privacidad y términos.
+* Se corrigieron inconsistencias en la estructura de los formularios del dashboard (`profile-c.php`, `profile-e.php`, `profile-o.php`).
+* Se mejoró la validación de los datos del usuario en `class-api.php`, asegurando que el tipo de usuario (`userType`) sea asignado correctamente.
+* Se eliminó `class-dashboard.php`, `class-login.php`, `class-menu.php` y `class-widgets.php` al ser redundantes con la nueva estructura de frontend.
+* Se corrigió la referencia a `COIMNE_CUSTOM_TEMPLATES_DIR` en `constants.php` para mejorar la organización de las plantillas.
+* Se eliminó `vendor-manager.php`, moviendo la gestión de dependencias a una estrategia más eficiente.
+* Se mejoró el manejo de localidades en `coimne-dashboard.js`, agregando eventos a los nuevos elementos `loc` y `emp_loc`.
+* Se corrigió la validación de `COIMNE_OPTION_DASHBOARD_URL` y `COIMNE_OPTION_LOGIN_URL` en los ajustes generales.
+* Se actualizó la estructura del `init.php` para reflejar los cambios en la carga de clases.
+* Se mejoró la estructura de `dashboard-parts` eliminando referencias obsoletas a `EMP`, reemplazándolas por `EMP_COI` donde corresponde.
+
 = 1.0.8 =
 * Correcciones menores en el paquete de actualización para WordPress.
 

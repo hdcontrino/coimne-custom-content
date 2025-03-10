@@ -1,24 +1,31 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class Coimne_Shortcodes
 {
     public function __construct()
     {
-        add_shortcode('coimne_login_btn', [$this, 'coimne_login_btn_shortcode']);
-        add_shortcode('coimne_login_form', [$this, 'coimne_login_form_shortcode']);
+        add_shortcode('coimne_login_btn', [$this, 'login_btn_shortcode']);
+        add_shortcode('coimne_login_form', [$this, 'login_form_shortcode']);
 
         add_shortcode('coimne_dashboard', [$this, 'dashboard_shortcode']);
         add_shortcode('coimne_dashboard_menu', [$this, 'dashboard_menu_shortcode']);
         add_shortcode('coimne_dashboard_profile', [$this, 'dashboard_profile_shortcode']);
+
+        add_shortcode('coimne_enrollment_form', [$this, 'enrollment_form_shortcode']);
     }
 
-    public function coimne_login_btn_shortcode()
+    public function login_btn_shortcode()
     {
         ob_start();
         Coimne_Login::display_login_button();
         return ob_get_clean();
     }
 
-    public function coimne_login_form_shortcode()
+    public function login_form_shortcode()
     {
         $recaptcha_site_key = get_option(COIMNE_OPTION_RECAPTCHA_SITE_KEY, '');
         $dashboard_url = get_option(COIMNE_OPTION_DASHBOARD_URL, site_url('/dashboard'));
@@ -85,5 +92,17 @@ class Coimne_Shortcodes
         ob_start();
         Coimne_Dashboard::display_dashboard_profile();
         return ob_get_clean();
+    }
+
+    public function enrollment_form_shortcode()
+    {
+        ob_start();
+        Coimne_Enrollment::display_coimne_enrollment();
+        return ob_get_clean();
+    }
+
+    public static function template_not_found()
+    {
+        return '<p>' . __('Error: No se encontró la plantilla de dashboard.', 'coimne-custom-content') . '</p>';
     }
 }

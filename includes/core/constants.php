@@ -4,10 +4,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+define('COIMNE_CUSTOM_TEMPLATES_DIR', COIMNE_CUSTOM_CONTENT_DIR . '/templates');
+
 define('COIMNE_OPTION_API_URL', 'coimne_api_url');
 define('COIMNE_OPTION_DEV_MODE', 'coimne_dev_mode');
+
 define('COIMNE_OPTION_LOGIN_URL', 'coimne_login_url');
 define('COIMNE_OPTION_DASHBOARD_URL', 'coimne_dashboard_url');
+define('COIMNE_OPTION_PRIVACY_URL', 'coimne_privacy_url');
+define('COIMNE_OPTION_TERMS_URL', 'coimne_terms_url');
+
 define('COIMNE_OPTION_RECAPTCHA_SITE_KEY', 'coimne_recaptcha_site_key');
 define('COIMNE_OPTION_RECAPTCHA_SECRET_KEY', 'coimne_recaptcha_secret_key');
 
