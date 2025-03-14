@@ -73,7 +73,7 @@ $escuelas = $api->get_escuelas();
                 </div>
                 <div class="coimne-form-group">
                     <label for="locs">Localidad:</label>
-                    <select id="locs" name="LOC" required>
+                    <select id="locs" name="LOC">
                         <option value="">Seleccionar localidad</option>
                         <?php foreach ($locs['data'] as $loc): ?>
                             <option value="<?php echo esc_attr($loc['ID']); ?>"
@@ -165,7 +165,7 @@ $escuelas = $api->get_escuelas();
                     </select>
                 </div>
             </div>
-            <h3>Cónyuge</h3>
+            <div class="coimne-subtitle">Cónyuge</div>
             <div class="coimne-form-row">
                 <div class="coimne-form-group">
                     <label for="con_nom">Nombre:</label>
@@ -230,8 +230,11 @@ $escuelas = $api->get_escuelas();
         <fieldset id="tab4" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="empresa">Empresa:</label>
-                <input type="hidden" id="emp" name="EMP" value="<?php echo esc_attr($user_profile['EMP']['ID']); ?>">
-                <input type="text" id="empresa" name="EMP_NAME" value="<?php echo esc_attr($user_profile['EMP']['NAME']); ?>">
+                <select id="empresa" name="EMP">
+                    <option value="<?php echo esc_attr($user_profile['EMP']['ID']); ?>" selected>
+                        <?php echo esc_html($user_profile['EMP']['NAME']); ?>
+                    </option>
+                </select>
             </div>
             <div class="coimne-form-group">
                 <label for="departamento">Departamento:</label>
@@ -252,17 +255,19 @@ $escuelas = $api->get_escuelas();
             <div class="coimne-form-row">
                 <div class="coimne-form-group">
                     <label for="emp_dir">Dirección:</label>
-                    <input type="text" id="emp_dir" name="EMP_DIR" value="<?php echo esc_attr($user_profile['EMP']['DIR']); ?>">
+                    <input type="text" id="emp_dir" name="EMP_DIR" readonly
+                        value="<?php echo esc_attr($user_profile['EMP']['DIR']); ?>">
                 </div>
                 <div class="coimne-form-group w1/3">
                     <label for="emp_cps">Código Postal:</label>
-                    <input type="text" id="emp_cps" name="EMP_CPS" value="<?php echo esc_attr($user_profile['EMP']['CPS']); ?>">
+                    <input type="text" id="emp_cps" name="EMP_CPS" readonly
+                        value="<?php echo esc_attr($user_profile['EMP']['CPS']); ?>">
                 </div>
             </div>
             <div class="coimne-form-row">
                 <div class="coimne-form-group">
                     <label for="emp_pai">País:</label>
-                    <select id="emp_pai" name="EMP_PAI">
+                    <select id="emp_pai" name="EMP_PAI" disabled>
                         <option value="">Seleccionar país</option>
                         <?php foreach ($countries['data'] as $country): ?>
                             <option value="<?php echo esc_attr($country['ID']); ?>"
@@ -274,7 +279,7 @@ $escuelas = $api->get_escuelas();
                 </div>
                 <div class="coimne-form-group">
                     <label for="emp_pro">Provincia:</label>
-                    <select id="emp_pro" name="EMP_PRO">
+                    <select id="emp_pro" name="EMP_PRO" disabled>
                         <option value="">Seleccionar provincia</option>
                         <?php foreach ($provinces['data'] as $province): ?>
                             <option value="<?php echo esc_attr($province['ID']); ?>"
@@ -287,7 +292,7 @@ $escuelas = $api->get_escuelas();
                 </div>
                 <div class="coimne-form-group">
                     <label for="emp_loc">Localidad:</label>
-                    <select id="emp_loc" name="EMP_LOC">
+                    <select id="emp_loc" name="EMP_LOC" disabled>
                         <option value="">Seleccionar localidad</option>
                         <?php foreach ($locs['data'] as $loc): ?>
                             <option value="<?php echo esc_attr($loc['ID']); ?>"
@@ -302,7 +307,7 @@ $escuelas = $api->get_escuelas();
             <div class="coimne-form-row">
                 <div class="coimne-form-group">
                     <label for="emp_pob">Municipio:</label>
-                    <select id="emp_pob" name="EMP_POB">
+                    <select id="emp_pob" name="EMP_POB" disabled>
                         <option value="">Seleccionar municipio</option>
                         <?php foreach ($towns['data'] as $town): ?>
                             <option value="<?php echo esc_attr($town['ID']); ?>"
@@ -315,17 +320,18 @@ $escuelas = $api->get_escuelas();
                 </div>
                 <div class="coimne-form-group">
                     <label for="emp_tfn">Teléfono:</label>
-                    <input type="text" id="emp_tfn" name="EMP_TFN" value="<?php echo esc_attr($user_profile['EMP']['TFN']); ?>">
+                    <input type="text" id="emp_tfn" name="EMP_TFN" readonly
+                        value="<?php echo esc_attr($user_profile['EMP']['TFN']); ?>">
                 </div>
                 <div class="coimne-form-group">
                     <label for="emp_tfn_mov">Móvil:</label>
-                    <input type="text" id="emp_tfn_mov" name="EMP_TFN_MOV"
+                    <input type="text" id="emp_tfn_mov" name="EMP_TFN_MOV" readonly
                         value="<?php echo esc_attr($user_profile['EMP']['TFN_MOV']); ?>">
                 </div>
             </div>
             <div class="coimne-form-group">
                 <label for="emp_eml">E-Mail:</label>
-                <input type="text" id="emp_eml" name="EMP_EML"
+                <input type="text" id="emp_eml" name="EMP_EML" readonly
                     value="<?php echo esc_attr($user_profile['EMP']['EML']); ?>">
             </div>
         </fieldset>

@@ -38,6 +38,7 @@ const coimneDashboard = {
 
             if (this.form) {
                 this.form.addEventListener("submit", this.submit);
+                this.initSelect2("#empresa", false);
             }
 
             if (this.form && this.country) {
@@ -48,6 +49,63 @@ const coimneDashboard = {
             if (this.form && this.emp_pai) {
                 this.emp_pai.addEventListener("change", this.empPaiChange);
                 this.emp_pro.addEventListener("change", this.empProChange);
+            }
+        },
+
+        initSelect2: function (select, allowClear = true) {
+            if (typeof jQuery !== "undefined") {
+                const $select = jQuery(select);
+
+                if ($select.length) {
+                    $select.select2({
+                        placeholder: "Buscar...",
+                        allowClear: allowClear,
+                        width: '100%',
+                        minimumInputLength: 3,
+                        ajax: {
+                            url: coimneDashboardData.ajaxUrl,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    action: 'coimne_search_companies',
+                                    search: params.term
+                                };
+                            },
+                            processResults: function (data) {
+                                const result = data.data;
+                                if (!data.success) {
+                                    console.log("Select2: " + result?.message);
+                                    return { results: [] };
+                                }
+                                
+                                return {
+                                    results: result[0].map(item => ({
+                                        id: item.ID,
+                                        text: item.NAME
+                                    }))
+                                };
+                            },
+                            cache: true
+                        },
+                        language: {
+                            searching: function () {
+                                return "Buscando...";
+                            },
+                            errorLoading: function () {
+                                return "⚠ No se pudo cargar la información";
+                            },
+                            inputTooShort: function () {
+                                return "Introduce al menos 3 caracteres";
+                            },
+                            noResults: function () {
+                                return "No se encontraron resultados";
+                            }
+                        }
+                    });
+                }
+            } else {
+                console.warn("jQuery no está disponible. Select2 no se pudo inicializar.");
             }
         },
 
@@ -72,6 +130,33 @@ const coimneDashboard = {
                 .catch(error => {
                     console.error("Error al cargar provincias: ", error);
                     provinceSelect.innerHTML = "<option>Error al cargar</option>";
+                })
+                .finally(() => {
+                    formGroup.classList.remove("loading");
+                });
+        },
+
+        updateDistricts: function (districtSelect, provinceId) {
+            const formGroup = districtSelect.closest(".coimne-form-group");
+            formGroup.classList.add("loading");
+
+            getDistricts(provinceId)
+                .then(districts => {
+                    if (districts.length > 0) {
+                        districtSelect.innerHTML = '<option value="">Seleccionar localidad</option>';
+                        districts.forEach(district => {
+                            const option = document.createElement("option");
+                            option.value = district.ID;
+                            option.textContent = district.NAME;
+                            districtSelect.appendChild(option);
+                        });
+                    } else {
+                        districtSelect.innerHTML = "<option>No hay localidades disponibles</option>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar localidades: ", error);
+                    districtSelect.innerHTML = "<option>Error al cargar</option>";
                 })
                 .finally(() => {
                     formGroup.classList.remove("loading");
@@ -109,14 +194,17 @@ const coimneDashboard = {
             const target = coimneDashboard.profile.province;
             const countryId = e.target.value;
             coimneDashboard.profile.updateProvinces(target, countryId);
+            coimneDashboard.profile.loc.value = '';
             coimneDashboard.profile.town.value = '';
         },
 
         provinceChange: function (e) {
-            const target = coimneDashboard.profile.town;
+            const locTarget = coimneDashboard.profile.loc;
+            const townTarget = coimneDashboard.profile.town;
             const countryId = coimneDashboard.profile.country.value;
             const provinceId = e.target.value;
-            coimneDashboard.profile.updateTowns(target, countryId, provinceId);
+            coimneDashboard.profile.updateDistricts(locTarget, countryId, provinceId);
+            coimneDashboard.profile.updateTowns(townTarget, countryId, provinceId);
         },
 
         empPaiChange: function (e) {
@@ -236,8 +324,8 @@ function getProvinces(countryId) {
     return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_provinces&country=${countryId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.success && data.data.list) {
-                return data.data.list;
+            if (data.success && data.data) {
+                return data.data[0];
             } else {
                 return [];
             }
@@ -248,18 +336,34 @@ function getProvinces(countryId) {
         });
 }
 
-function getTowns(countryId, provinceId) {
-    return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_towns&country=${countryId}&province=${provinceId}`)
+function getDistricts(countryId, provinceId) {
+    return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_locs&country=${countryId}&province=${provinceId}`)
         .then(response => response.json())
         .then(data => {
-            if (data.success && data.data.list) {
-                return data.data.list;
+            if (data.success && data.data) {
+                return data.data[0];
             } else {
                 return [];
             }
         })
         .catch(error => {
-            console.error("Error al recibir pobloados:", error);
+            console.error("Error al recibir localidades:", error);
+            return [];
+        });
+}
+
+function getTowns(countryId, provinceId) {
+    return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_towns&country=${countryId}&province=${provinceId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                return data.data[0];
+            } else {
+                return [];
+            }
+        })
+        .catch(error => {
+            console.error("Error al recibir municipios:", error);
             return [];
         });
 }

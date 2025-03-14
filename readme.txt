@@ -4,9 +4,9 @@ Author: Daniel Contrino
 Author URI: https://coheda.com
 Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
-Tested up to: 6.7.2
+Tested up to: 6.7.1
 Requires PHP: 7.4
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,14 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.10 =
+* Integración de Select2 para búsqueda de empresas en el perfil.
+* Refactorización de llamadas a la API y mejoras en gestión de errores.
+* Se agregó un formulario de inscripción con validaciones.
+* Se mejoró la gestión de cursos en el Dashboard.
+* Se optimizó la carga de scripts y estilos.
+* Ajustes en los shortcodes y correcciones en la estructura del código.
+
 = 1.0.9 =
 * Se agregó soporte para la configuración de URL de privacidad y términos y condiciones en los ajustes generales.
 * Se actualizaron las funciones `coimne_register_general_settings()` y `coimne_dashboard_url_callback()` para incluir las nuevas opciones de URL de privacidad y términos.

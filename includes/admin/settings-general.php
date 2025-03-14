@@ -71,8 +71,8 @@ function coimne_privacy_url_setting()
 
     add_settings_field(
         COIMNE_OPTION_PRIVACY_URL,
-        __('URL de Términos y Condiciones', 'coimne-custom-content'),
-        'coimne_terms_url_callback',
+        __('URL de Políticas de Privacidad', 'coimne-custom-content'),
+        'coimne_privacy_url_callback',
         'coimne-settings-general',
         'coimne_general_section'
     );

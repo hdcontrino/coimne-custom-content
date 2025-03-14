@@ -1,9 +1,12 @@
 {
     "name": "Coimne Custom Content",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "homepage": "https://github.com/hdcontrino/coimne-custom-content",
-    "download_url": "https://github.com/hdcontrino/coimne-custom-content/releases/download/v1.0.9/coimne-custom-content.zip",
-    "requires": "5.0",
-    "tested": "6.3",
-    "requires_php": "7.4"
+    "download_url": "https://github.com/hdcontrino/coimne-custom-content/releases/download/v1.0.10/coimne-custom-content.zip",
+    "requires": "6.0",
+    "tested": "6.7.1",
+    "requires_php": "7.4.33",
+    "sections": {
+        "description": "Este plugin permite mostrar contenido personalizado para ciertos usuarios mediante shortcodes y widgets.</p>\n\n<strong>Características:</strong>\n<ul>\n<li>Formulario de login como shortcode y widget.</li>\n<li>Comunicación con una API externa para validar usuarios.</li>\n<li>Gestión de sesiones independiente de WordPress.</li>\n<li>Contenido dinámico basado en el estado de sesión del usuario.</li>\n</ul>"
+    }
 }

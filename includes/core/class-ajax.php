@@ -29,8 +29,17 @@ class Coimne_Ajax
         add_action('wp_ajax_coimne_get_provinces', [$this, 'get_provinces']);
         add_action('wp_ajax_nopriv_coimne_get_provinces', [$this, 'get_provinces']);
 
+        add_action('wp_ajax_coimne_get_locs', [$this, 'get_locs']);
+        add_action('wp_ajax_nopriv_coimne_get_locs', [$this, 'get_locs']);
+
         add_action('wp_ajax_coimne_get_towns', [$this, 'get_towns']);
         add_action('wp_ajax_nopriv_coimne_get_towns', [$this, 'get_towns']);
+
+        add_action('wp_ajax_coimne_search_companies', [$this, 'search_companies']);
+        add_action('wp_ajax_nopriv_coimne_search_companies', [$this, 'search_companies']);
+
+        add_action('wp_ajax_coimne_submit_enrollment', [$this, 'submit_enrollment']);
+        add_action('wp_ajax_nopriv_coimne_submit_enrollment', [$this, 'submit_enrollment']);
     }
 
     public function handle_login()
@@ -173,7 +182,30 @@ class Coimne_Ajax
             wp_die();
         }
 
-        wp_send_json_success(['list' => $response]);
+        wp_send_json_success([$response['data']]);
+        wp_die();
+    }
+
+    public function get_locs()
+    {
+        if (!isset($_GET['country']) || !isset($_GET['province'])) {
+            wp_send_json_error(['message' => __('Faltan parámetros.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+        $country = sanitize_text_field($_GET['country']);
+        $province = sanitize_text_field($_GET['province']);
+        $response = $api->get_towns($country, $province);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error([
+                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener población.', 'coimne-custom-content')
+            ]);
+            wp_die();
+        }
+
+        wp_send_json_success([$response['data']]);
         wp_die();
     }
 
@@ -196,7 +228,38 @@ class Coimne_Ajax
             wp_die();
         }
 
-        wp_send_json_success(['list' => $response]);
+        wp_send_json_success([$response['data']]);
+        wp_die();
+    }
+
+    public function search_companies()
+    {
+        if (!isset($_GET['search'])) {
+            wp_send_json_error(['message' => 'Falta el término de búsqueda']);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+        $search = sanitize_text_field($_GET['search']);
+        $response = $api->get_empresas($search);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error([
+                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener empresa.', 'coimne-custom-content')
+            ]);
+            wp_die();
+        }
+
+        wp_send_json_success([$response['data']]);
+        wp_die();
+    }
+
+    public function submit_enrollment()
+    {
+        $api = new Coimne_API();
+        $response = $api->submit_enrollment($_POST);
+
+        wp_send_json($response);
         wp_die();
     }
 }

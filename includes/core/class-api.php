@@ -8,6 +8,7 @@ class Coimne_API
 {
     public $userData;
     public $userType;
+    public $userId;
     public $token;
 
     private $api_url;
@@ -18,20 +19,26 @@ class Coimne_API
 
     public function __construct()
     {
+        $this->userData = [];
+        $this->userType = 'o';
+        $this->userId = 0;
+        $this->token = '';
+
         $this->api_url = get_option(COIMNE_OPTION_API_URL, '');
         $this->session = new Coimne_Session();
         $this->ssl_verify = get_option(COIMNE_OPTION_DEV_MODE, false) ? false : true;
 
         if (empty($this->api_url)) {
-            return [
-                'success' => false, 
-                'message' => __('La URL de la API no está configurada.', 'coimne-custom-content')
-            ];
+            return $this->throwError(null, 'La URL de la API no está configurada.');
         }
 
         if ($this->userData = $this->session->get_session('coimne_user_data')) {
-            $this->userType = strtolower($this->userData['tip'] ?: 'o');
-            $this->token = $this->userData ? $this->userData['token'] : '';
+            $this->userId = $this->userData['cttId'];
+            $this->token = $this->userData['token'];
+        }
+
+        if ($this->userData && $this->userData['tip']) {
+            $this->userType = $this->userData['tip'];
         }
     }
 
@@ -39,10 +46,7 @@ class Coimne_API
     {
         $recaptcha_secret = get_option(COIMNE_OPTION_RECAPTCHA_SECRET_KEY, '');
         if (empty($recaptcha_secret)) {
-            return [
-                'success' => false, 
-                'message' => __('La clave secreta de reCAPTCHA no está configurada.', 'coimne-custom-content')
-            ];
+            return $this->throwError(null, 'La clave secreta de reCAPTCHA no está configurada.');
         }
 
         $response = wp_remote_post("https://www.google.com/recaptcha/api/siteverify", [
@@ -54,18 +58,12 @@ class Coimne_API
         ]);
 
         if (is_wp_error($response)) {
-            return [
-                'success' => false, 
-                'message' => __('Error de conexión con Google reCAPTCHA.', 'coimne-custom-content')
-            ];
+            return $this->throwError(null, 'Error de conexión con Google reCAPTCHA.');
         }
 
         $body = json_decode(wp_remote_retrieve_body($response), true);
         if (!$body['success']) {
-            return [
-                'success' => false, 
-                'message' => __('La validación de reCAPTCHA ha fallado.', 'coimne-custom-content')
-            ];
+            return $this->throwError(null, 'La validación de reCAPTCHA ha fallado.');
         }
 
         return [
@@ -81,7 +79,7 @@ class Coimne_API
         ];
         $data = $this->post('/login', $contentBody);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -102,7 +100,7 @@ class Coimne_API
         ];
         $data = $this->post('/forgotPass', $contentBody);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -115,17 +113,70 @@ class Coimne_API
     public function get_user_profile()
     {
         $endpoint = "/Perfil";
-        $user_id = $this->userData['cttId'];
-        $user_type = $this->userData['tip'];
-        $params = "?CTT_ID=$user_id&TIP=$user_type";
+        $params = "?CTT_ID=$this->userId&TIP=$this->userType";
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data) {
-            return [
-                'success' => false, 
-                'message' => __('Error recibiendo datos', 'coimne-custom-content')
-            ];
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => true,
+            'data' => $data['desc']['list'][0]
+        ];
+    }
+
+    public function get_courses($query = [])
+    {
+        $search = array_merge([
+            'name' => '',
+            'inicioDesde' => '',
+            'inicioHasta' => '',
+            'inscriptoDesde' => '',
+            'inscriptoHasta' => '',
+        ], $query);
+
+        $endpoint = "/MisCursos";
+        $params = "?CTT_ID=$this->userId&NOM=$search[name]";
+
+        if ($search['inicioDesde']) {
+            $desde = Coimne_Helper::format_date_to_backend($search['inicioDesde']);
+            $hasta = Coimne_Helper::format_date_to_backend($search['inicioHasta']);
+            $hasta = $hasta ?: date('d-m-Y');
+
+            $params .= "&FEC_INI_CUR_DES=$desde&FEC_INI_CUR_HAS=$hasta";
+        }
+
+        if ($search['inscriptoDesde']) {
+            $desde = Coimne_Helper::format_date_to_backend($search['inscriptoDesde']);
+            $hasta = Coimne_Helper::format_date_to_backend($search['inscriptoHasta']);
+            $hasta = $hasta ?: date('d-m-Y');
+
+            $params .= "&FEC_INS_DES=$desde&FEC_INS_HAS=$hasta";
+        }
+
+        $data = $this->get($endpoint . $params);
+
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => true,
+            'data' => $data['desc']['list'][0]
+        ];
+    }
+
+    public function get_projects()
+    {
+        $endpoint = "/Proyectos";
+        $params = "?CTT_ID=$this->userId";
+
+        $data = $this->get($endpoint . $params);
+
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
@@ -166,9 +217,11 @@ class Coimne_API
             // DATOS DE EMPRESA
             //[
             //    'NAME' => $profileData['EMP_NAME'],
-            //    'PAI' => $profileData['EMP_PAI'],
             //    'DIR' => $profileData['EMP_DIR'],
+            //    'DIR' => $profileData['EMP_CPS'],
+            //    'PAI' => $profileData['EMP_PAI'],
             //    'PRO' => $profileData['EMP_PRO'],
+            //    'PRO' => $profileData['EMP_LOC'],
             //    'POB' => $profileData['EMP_POB'],
             //    'TFN' => $profileData['EMP_TFN'],
             //    'TFN_MOV' => $profileData['EMP_TFN_MOV'],
@@ -182,7 +235,7 @@ class Coimne_API
         ];
         $data = $this->post('/Perfil', $contentBody);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -198,10 +251,7 @@ class Coimne_API
         $password_changes = $accountData['NEWPASS'] !== '';
         
         if (!$username_changes && !$password_changes) {
-            return [
-                'success' => false,
-                'message' => __('Sin cambios.')
-            ];
+            return $this->throwError(null, 'Sin cambios.');
         }
         
         if ($username_changes) {
@@ -212,7 +262,7 @@ class Coimne_API
             ];
             $data = $this->post('/ChangeUser', $contentBody);
 
-            if (!isset($data['status']) || !$data['status']) {
+            if (!$data || !isset($data['status']) || !$data['status']) {
                 return $this->throwError($data);
             }
         }
@@ -226,7 +276,7 @@ class Coimne_API
             ];
             $data = $this->post('/ChangePass', $contentBody);
 
-            if (!isset($data['status']) || !$data['status']) {
+            if (!$data || !isset($data['status']) || !$data['status']) {
                 return $this->throwError($data);
             }
         }
@@ -240,12 +290,11 @@ class Coimne_API
     public function get_countries()
     {
         $endpoint = "/Paises";
-        $user_id = $this->userData['cttId'] ?: 0;
-        $params = "?CTT_ID=$user_id";
+        $params = "?CTT_ID=$this->userId";
 
         $data = $this->get($endpoint . $params);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -258,12 +307,11 @@ class Coimne_API
     public function get_provinces($countryId)
     {
         $endpoint = "/Provincias";
-        $user_id = $this->userData['cttId'] ?: 0;
-        $params = "?CTT_ID=$user_id&PAI=$countryId";
+        $params = "?CTT_ID=$this->userId&PAI=$countryId";
 
         $data = $this->get($endpoint . $params);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -276,14 +324,13 @@ class Coimne_API
     public function get_locs($countryId, $provinceId, $zipId = 0)
     {
         $endpoint = "/Localidades";
-        $user_id = $this->userData['cttId'] ?: 0;
-        $params = "?CTT_ID=$user_id&PAI=$countryId&PRO=$provinceId";
+        $params = "?CTT_ID=$this->userId&PAI=$countryId&PRO=$provinceId";
 
         if ($zipId) $params .= "&CP=$zipId";
 
         $data = $this->get($endpoint . $params);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -296,14 +343,13 @@ class Coimne_API
     public function get_towns($countryId, $provinceId, $zipId = 0)
     {
         $endpoint = "/Poblaciones";
-        $user_id = $this->userData['cttId'] ?: 0;
-        $params = "?CTT_ID=$user_id&PAI=$countryId&PRO=$provinceId";
+        $params = "?CTT_ID=$this->userId&PAI=$countryId&PRO=$provinceId";
 
         if ($zipId) $params .= "&CP=$zipId";
 
         $data = $this->get($endpoint . $params);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -316,12 +362,11 @@ class Coimne_API
     public function get_escuelas()
     {
         $endpoint = "/Escuelas";
-        $user_id = $this->userData['cttId'] ?: 0;
-        $params = "?CTT_ID=$user_id";
+        $params = "?CTT_ID=$this->userId";
 
         $data = $this->get($endpoint . $params);
 
-        if (!isset($data['status']) || !$data['status']) {
+        if (!$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
         }
 
@@ -331,22 +376,91 @@ class Coimne_API
         ];
     }
 
-    private function throwError($data)
+    public function get_cursos()
     {
-        $message = __($this->unknownError, 'coimne-custom-content');
+        $endpoint = "/Cursos";
+        $params = "";
 
-        if (isset($data['desc']) && isset($data['desc']['error'])) {
-            $message = $data['desc']['error'];
+        $data = $this->get($endpoint . $params, false);
+
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return [
-            'success' => false,
-            'message' => $message,
-            'data' => []
+            'success' => !empty($data['desc']['list']),
+            'data' => $data['desc']['list']
         ];
     }
 
-    private function get($endpoint)
+    public function get_empresas($search = '')
+    {
+        $endpoint = "/Empresas";
+        $params = "?CTT_ID=$this->userId&NOM=$search";
+
+        $data = $this->get($endpoint . $params);
+
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => !empty($data['desc']['list']),
+            'data' => $data['desc']['list']
+        ];
+    }
+
+    public function submit_enrollment($formData)
+    {
+        $fields = [
+            'curId'   => $formData['CUR_ID']  ?? null,
+            'nif'     => $formData['NIF']     ?? null,
+            'name'    => $formData['NAME']    ?? null,
+            'ape1'    => $formData['APE_1']   ?? null,
+            'ape2'    => $formData['APE_2']   ?? null,
+            'eml'     => $formData['EML']     ?? null,
+            'tfn'     => $formData['TFN']     ?? null,
+            'terms'   => $formData['TERMS']   == 'on',
+            'privacy' => $formData['PRIVACY'] == 'on',
+        ];
+        
+        foreach ($fields as $each) {
+            if (!$each) {
+                return $this->throwError(null, 'Faltan campos obligatorios.');
+            }
+        }
+
+        if (!Coimne_Helper::validar_nif($formData['NIF'])) {
+            return $this->throwError(null, 'El NIF ingresado no es válido.');
+        }
+
+        if (!Coimne_Helper::validar_telefono($formData['TFN'])) {
+            return $this->throwError(null, 'El número de teléfono ingresado no es válido.');
+        }
+
+        $contentBody = [
+            'CUR_ID' => $fields['curId'],
+            'NOM' => $fields['name'],
+            'APE_1' => $fields['ape1'],
+            'APE_2' => $fields['ape2'],
+            'EML' => $fields['eml'],
+            'NIF' => $fields['nif'],
+            'TFN' => $fields['tfn'],
+        ];
+
+        $data = $this->post('/insCurAlt', $contentBody);
+
+        if (!$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => true,
+            'message' => __('Inscripción enviada correctamente.', 'coimne-custom-content')
+        ];
+    }
+
+    private function get($endpoint, $checkSession = true)
     {   
         $finalUrl = rtrim($this->api_url, '/') . $endpoint;
 
@@ -360,13 +474,13 @@ class Coimne_API
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
-        $this->check_session_status($data);
 
-        if (!$body || !isset($data['status'])) {
-            return [
-                'success' => false,
-                'message' => $this->unknownError
-            ];
+        if ($checkSession) {
+            $this->check_session_status($data);
+        }
+
+        if (!$body || !$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return $data;
@@ -389,11 +503,8 @@ class Coimne_API
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if (!$body || !isset($data['status'])) {
-            return [
-                'success' => false,
-                'message' => __('Error desconocido.', 'coimne-custom-content')
-            ];
+        if (!$body || !$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
         }
 
         return $data;
@@ -421,5 +532,22 @@ class Coimne_API
 
         echo '<script>window.location.replace("' . esc_url(home_url()) . '");</script>';
         exit;
+    }
+
+    private function throwError($data, $message = '')
+    {
+        $message = $message 
+            ? __($message, 'coimne-custom-content')
+            : __($this->unknownError, 'coimne-custom-content');
+
+        if ($data && isset($data['desc']) && isset($data['desc']['error'])) {
+            $message = $data['desc']['error'];
+        }
+
+        return [
+            'success' => false,
+            'message' => $message,
+            'data' => []
+        ];
     }
 }

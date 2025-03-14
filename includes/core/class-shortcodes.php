@@ -52,6 +52,13 @@ class Coimne_Shortcodes
         if (Coimne_Helper::in_the_builder()) {
             return Coimne_Helper::hidden_shortcode_notice('Dashboard');
         }
+
+        wp_enqueue_script('jquery');
+
+        if (!wp_script_is('select2', 'registered')) {
+            wp_enqueue_style('select2-css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
+            wp_enqueue_script('select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', ['jquery'], null, true);
+        }
         
         wp_enqueue_style('coimne-dashboard-styles', Coimne_Helper::asset_url('css/coimne-dashboard.css'));
         wp_enqueue_script('coimne-dashboard-script', Coimne_Helper::asset_url('js/coimne-dashboard.js'), [], false, true);
@@ -96,6 +103,13 @@ class Coimne_Shortcodes
 
     public function enrollment_form_shortcode()
     {
+        wp_enqueue_style('coimne-enroll-styles', Coimne_Helper::asset_url('css/coimne-enrollment.css'));
+        wp_enqueue_script('coimne-enroll-script', Coimne_Helper::asset_url('js/coimne-enrollment.js'), [], false, true);
+
+        wp_localize_script('coimne-enroll-script', 'coimneEnrollmentData', [
+            'ajaxUrl' => esc_url(admin_url('admin-ajax.php')),
+        ]);
+
         ob_start();
         Coimne_Enrollment::display_coimne_enrollment();
         return ob_get_clean();
@@ -103,6 +117,6 @@ class Coimne_Shortcodes
 
     public static function template_not_found()
     {
-        return '<p>' . __('Error: No se encontró la plantilla de dashboard.', 'coimne-custom-content') . '</p>';
+        return '<p>' . __('Error: No se encontró la plantilla del formulario.', 'coimne-custom-content') . '</p>';
     }
 }

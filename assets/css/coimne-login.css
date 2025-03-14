@@ -16,7 +16,8 @@
     min-width: 9em;
 }
 
-.coimne-error-message {
+.coimne-error-message,
+.coimne-required-field {
     color: red;
     font-weight: bold;
     margin-top: 10px;

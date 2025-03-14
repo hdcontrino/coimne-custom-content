@@ -2,6 +2,7 @@
 
 <?php
 $emp_dep = $user_profile['EMP_COI']['EMP_DEP_COI_EMP_NOM_ON'];
+$empresas = $api->get_empresas();
 ?>
 
 <div class="coimne-dashboard-info">
@@ -112,8 +113,11 @@ $emp_dep = $user_profile['EMP_COI']['EMP_DEP_COI_EMP_NOM_ON'];
         <fieldset id="tab2" class="tab-pane">
             <div class="coimne-form-group">
                 <label for="empresa">Empresa:</label>
-                <input type="hidden" id="emp" name="EMP" value="<?php echo esc_attr($user_profile['EMP_COI']['ID']); ?>">
-                <input type="text" id="empresa" name="EMP_NAME" value="<?php echo esc_attr($user_profile['EMP_COI']['NAME']); ?>">
+                <select id="empresa" name="EMP">
+                    <option value="<?php echo esc_attr($user_profile['EMP_COI']['ID']); ?>" selected>
+                        <?php echo esc_html($user_profile['EMP_COI']['NAME']); ?>
+                    </option>
+                </select>
             </div>
             <div class="coimne-form-group">
                 <label for="departamento">Departamento:</label>
@@ -132,5 +136,9 @@ $emp_dep = $user_profile['EMP_COI']['EMP_DEP_COI_EMP_NOM_ON'];
                 <input type="text" id="emp_cgo" name="EMP_CGO" value="<?php echo esc_attr($user_profile['EMP_CGO']); ?>">
             </div>
         </fieldset>
+
+        <button id="coimne-profile-submit" type="submit">Guardar cambios</button>
+        <span id="coimne-profile-loader" class="coimne-loader" style="display: none;"></span>
+        <span id="coimne-profile-message"></span>
     </form>
 </div>

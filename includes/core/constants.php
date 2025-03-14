@@ -22,6 +22,8 @@ define('COIMNE_OPTIONS', [
     COIMNE_OPTION_DEV_MODE,
     COIMNE_OPTION_LOGIN_URL,
     COIMNE_OPTION_DASHBOARD_URL,
+    COIMNE_OPTION_PRIVACY_URL,
+    COIMNE_OPTION_TERMS_URL,
     COIMNE_OPTION_RECAPTCHA_SITE_KEY,
     COIMNE_OPTION_RECAPTCHA_SECRET_KEY,
 ]);
@@ -29,18 +31,19 @@ define('COIMNE_OPTIONS', [
 define('COIMNE_MENU_C_ITEMS', [
     'profile'  => 'Perfil',
     'projects' => 'Visados proyectos',
-    'courses'  => 'Mis cursos',
     'account'  => 'Mi cuenta',
 ]);
 
 define('COIMNE_MENU_E_ITEMS', [
     'profile'  => 'Perfil',
+    'projects' => 'Visados proyectos',
     'courses'  => 'Mis cursos',
     'account'  => 'Mi cuenta',
 ]);
 
 define('COIMNE_MENU_O_ITEMS', [
     'profile'  => 'Perfil',
+    'courses'  => 'Mis cursos',
     'account'  => 'Mi cuenta',
 ]);
 

@@ -9,6 +9,7 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/helpers.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/constants.php';
 
 // Cargar funcionalidades principales
+require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-ajax.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-api.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-session.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/core/class-shortcodes.php';
@@ -19,9 +20,6 @@ require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-dashboard.php'
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-enrollment.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-login.php';
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/frontend/class-menu.php';
-
-// Cargar AJAX
-require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/ajax/class-ajax.php';
 
 // Cargar administración
 require_once COIMNE_CUSTOM_CONTENT_DIR . 'includes/admin/admin-settings.php';

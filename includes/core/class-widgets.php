@@ -17,7 +17,6 @@ class Coimne_Widgets extends WP_Widget
     }
 }
 
-// Registrar el widget
 function coimne_register_widgets()
 {
     register_widget('Coimne_Widgets');
