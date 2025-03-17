@@ -4,9 +4,9 @@ Author: Daniel Contrino
 Author URI: https://coheda.com
 Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
-Tested up to: 6.7.1
+Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,13 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.11 =
+- Refactorización de respuestas de la API, reemplazando `desc` por `data`.
+- Mejoras en la validación de respuestas y gestión de errores en la API.
+- Correcciones en Select2 para evitar problemas con valores `null` en los selectores.
+- Ajustes en la carga dinámica de plantillas del Dashboard para manejar nombres en minúsculas.
+- Compatibilidad actualizada con WordPress 6.7.2.
+
 = 1.0.10 =
 * Integración de Select2 para búsqueda de empresas en el perfil.
 * Refactorización de llamadas a la API y mejoras en gestión de errores.

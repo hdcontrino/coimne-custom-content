@@ -79,17 +79,17 @@ class Coimne_API
         ];
         $data = $this->post('/login', $contentBody);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
-        $this->session->set_session('coimne_user_data', $data['desc']);
-        $this->token = $data['desc']['token'];
+        $this->session->set_session('coimne_user_data', $data['data']);
+        $this->token = $data['data']['token'];
 
         return [
             'success' => true,
-            'token' => $data['desc']['token'],
-            'user' => $data['desc']
+            'token' => $data['data']['token'],
+            'user' => $data['data']
         ];
     }
 
@@ -100,13 +100,13 @@ class Coimne_API
         ];
         $data = $this->post('/forgotPass', $contentBody);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
             'success' => true,
-            'message' => $data['desc']['success']
+            'message' => $data['message']
         ];
     }
 
@@ -117,13 +117,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
             'success' => true,
-            'data' => $data['desc']['list'][0]
+            'data' => $data['data']['list'][0]
         ];
     }
 
@@ -158,13 +158,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
             'success' => true,
-            'data' => $data['desc']['list'][0]
+            'data' => $data['data']['list'][0]
         ];
     }
 
@@ -175,13 +175,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
             'success' => true,
-            'data' => $data['desc']['list'][0]
+            'data' => $data['data']['list'][0]
         ];
     }
 
@@ -235,7 +235,7 @@ class Coimne_API
         ];
         $data = $this->post('/Perfil', $contentBody);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
@@ -262,7 +262,7 @@ class Coimne_API
             ];
             $data = $this->post('/ChangeUser', $contentBody);
 
-            if (!$data || !isset($data['status']) || !$data['status']) {
+            if (!$data['success']) {
                 return $this->throwError($data);
             }
         }
@@ -276,7 +276,7 @@ class Coimne_API
             ];
             $data = $this->post('/ChangePass', $contentBody);
 
-            if (!$data || !isset($data['status']) || !$data['status']) {
+            if (!$data['success']) {
                 return $this->throwError($data);
             }
         }
@@ -294,13 +294,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -311,13 +311,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -330,13 +330,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -349,13 +349,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -366,13 +366,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -383,13 +383,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params, false);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -400,13 +400,13 @@ class Coimne_API
 
         $data = $this->get($endpoint . $params);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
         return [
-            'success' => !empty($data['desc']['list']),
-            'data' => $data['desc']['list']
+            'success' => !empty($data['data']['list']),
+            'data' => $data['data']['list']
         ];
     }
 
@@ -450,7 +450,7 @@ class Coimne_API
 
         $data = $this->post('/insCurAlt', $contentBody);
 
-        if (!$data || !isset($data['status']) || !$data['status']) {
+        if (!$data['success']) {
             return $this->throwError($data);
         }
 
@@ -483,7 +483,11 @@ class Coimne_API
             return $this->throwError($data);
         }
 
-        return $data;
+        return [
+            'success' => $data['status'],
+            'message' => $data['message'] ?? '',
+            'data' => $data['desc']
+        ];
     }
 
     private function post($endpoint, $body = [])
@@ -507,7 +511,11 @@ class Coimne_API
             return $this->throwError($data);
         }
 
-        return $data;
+        return [
+            'success' => $data['status'],
+            'message' => $data['message'] ?? '',
+            'data' => $data['desc']
+        ];
     }
 
     private function check_session_status($response)
@@ -540,8 +548,12 @@ class Coimne_API
             ? __($message, 'coimne-custom-content')
             : __($this->unknownError, 'coimne-custom-content');
 
-        if ($data && isset($data['desc']) && isset($data['desc']['error'])) {
-            $message = $data['desc']['error'];
+        if ($data && isset($data['message']) && $data['message']) {
+            $message = $data['message'];
+        }
+
+        if ($data && isset($data['data']) && isset($data['data']['error'])) {
+            $message = $data['data']['error'];
         }
 
         return [

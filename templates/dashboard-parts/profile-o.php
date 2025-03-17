@@ -46,7 +46,7 @@ $empresas = $api->get_empresas();
                         <option value="">Seleccionar país</option>
                         <?php foreach ($countries['data'] as $country): ?>
                             <option value="<?php echo esc_attr($country['ID']); ?>"
-                                <?php selected($country['ID'], $user_profile['PAI']); ?>>
+                                <?php selected($country['ID'], $user_profile['PAI'] ?? 0); ?>>
                                 <?php echo esc_html($country['NAME']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -58,7 +58,7 @@ $empresas = $api->get_empresas();
                         <option value="">Seleccionar provincia</option>
                         <?php foreach ($provinces['data'] as $province): ?>
                             <option value="<?php echo esc_attr($province['ID']); ?>"
-                                <?php selected($province['ID'], $user_profile['PRO']); ?>>
+                                <?php selected($province['ID'], $user_profile['PRO'] ?? 0); ?>>
                                 <?php echo esc_html($province['NAME']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -71,7 +71,7 @@ $empresas = $api->get_empresas();
                         <option value="">Seleccionar localidad</option>
                         <?php foreach ($locs['data'] as $loc): ?>
                             <option value="<?php echo esc_attr($loc['ID']); ?>"
-                                <?php selected($loc['ID'], $user_profile['LOC']); ?>>
+                                <?php selected($loc['ID'], $user_profile['LOC'] ?? 0); ?>>
                                 <?php echo esc_html($loc['NAME']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -86,7 +86,7 @@ $empresas = $api->get_empresas();
                         <option value="">Seleccionar municipio</option>
                         <?php foreach ($towns['data'] as $town): ?>
                             <option value="<?php echo esc_attr($town['ID']); ?>"
-                                <?php selected($town['ID'], $user_profile['POB']); ?>>
+                                <?php selected($town['ID'], $user_profile['POB'] ?? 0); ?>>
                                 <?php echo esc_html($town['NAME']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -125,7 +125,7 @@ $empresas = $api->get_empresas();
                     <option value="">Seleccionar ...</option>
                     <?php foreach ($emp_dep as $dep): ?>
                         <option value="<?php echo esc_attr($dep['ID']); ?>"
-                            <?php selected($dep['ID'], $user_profile['EMP_DEP']); ?>>
+                            <?php selected($dep['ID'], $user_profile['EMP_DEP'] ?? 0); ?>>
                             <?php echo esc_html($dep['NAME']); ?>
                         </option>
                     <?php endforeach; ?>

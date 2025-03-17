@@ -77,8 +77,10 @@ class Coimne_Dashboard
     {
         $api = new Coimne_API();
 
+        $user_type = strtolower($api->userType);
+
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
-            . "/dashboard-parts/account-$api->userType.php";
+            . "/dashboard-parts/account-$user_type.php";
 
         if (file_exists($template)) {
             return include $template;

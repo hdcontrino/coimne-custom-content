@@ -9,9 +9,11 @@ class Coimne_Menu
     public static function display_dashboard_menu()
     {
         $api = new Coimne_API();
+
+        $user_type = strtolower($api->userType);
         
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
-            . "/dashboard-parts/menu-$api->userType.php";
+            . "/dashboard-parts/menu-$user_type.php";
 
         if (file_exists($template)) {
             $menu_avatar_url = Coimne_Helper::asset_url('img/default-avatar.png');
