@@ -69,21 +69,6 @@ $empresas = $api->get_empresas();
                     <span class="coimne-loader"></span>
                 </div>
                 <div class="coimne-form-group">
-                    <label for="locs">Localidad:</label>
-                    <select id="locs" name="LOC">
-                        <option value="">Seleccionar localidad</option>
-                        <?php foreach ($locs['data'] as $loc): ?>
-                            <option value="<?php echo esc_attr($loc['ID']); ?>"
-                                <?php selected($loc['ID'], $user_profile['LOC'] ?? 0); ?>>
-                                <?php echo esc_html($loc['NAME']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <span class="coimne-loader"></span>
-                </div>
-            </div>
-            <div class="coimne-form-row">
-                <div class="coimne-form-group">
                     <label for="towns">Municipio:</label>
                     <select id="towns" name="POB">
                         <option value="">Seleccionar municipio</option>
@@ -95,6 +80,12 @@ $empresas = $api->get_empresas();
                         <?php endforeach; ?>
                     </select>
                     <span class="coimne-loader"></span>
+                </div>
+            </div>
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="loc">Localidad:</label>
+                    <input type="text" id="loc" name="LOC" value="<?php echo esc_attr($user_profile['LOC']); ?>">
                 </div>
                 <div class="coimne-form-group">
                     <label for="phone">Teléfono:</label>

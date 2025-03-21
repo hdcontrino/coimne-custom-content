@@ -28,25 +28,6 @@ define('COIMNE_OPTIONS', [
     COIMNE_OPTION_RECAPTCHA_SECRET_KEY,
 ]);
 
-define('COIMNE_MENU_C_ITEMS', [
-    'profile'  => 'Perfil',
-    'projects' => 'Visados proyectos',
-    'account'  => 'Mi cuenta',
-]);
-
-define('COIMNE_MENU_E_ITEMS', [
-    'profile'  => 'Perfil',
-    'projects' => 'Visados proyectos',
-    'courses'  => 'Mis cursos',
-    'account'  => 'Mi cuenta',
-]);
-
-define('COIMNE_MENU_O_ITEMS', [
-    'profile'  => 'Perfil',
-    'courses'  => 'Mis cursos',
-    'account'  => 'Mi cuenta',
-]);
-
 define('EST_CIV', [
     '1'  => 'Soltero/a',
     '2'  => 'Casado/a',

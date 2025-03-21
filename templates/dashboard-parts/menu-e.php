@@ -6,7 +6,7 @@
     </div>
     <nav class="coimne-profile-menu">
         <ul id="menu-profile" class="coimne-dashboard-menu-list">
-            <?php foreach (COIMNE_MENU_E_ITEMS as $key => $label) : ?>
+            <?php foreach (self::$menu_externos as $key => $label) : ?>
                 <li id="menu-item-<?php echo esc_attr($key); ?>" class="menu-item">
                     <a href="javascript:void(0);" data-content="<?php echo esc_attr($key); ?>">
                         <?php echo esc_html__($label, 'coimne-custom-content'); ?>

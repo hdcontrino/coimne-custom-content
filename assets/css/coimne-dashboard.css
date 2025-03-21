@@ -8,6 +8,17 @@
     }
 }
 
+.coimne-justify-between {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: wrap;
+}
+
+.coimne-justify-right {
+    display: flex;
+    justify-content: right;
+}
+
 .coimne-error-message,
 .coimne-required-field {
     color: red;
@@ -113,6 +124,100 @@
     display: block;
 }
 
+.coimne-courses-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    line-break: normal;
+}
+
+.coimne-courses-search form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.coimne-courses-search input[type="text"],
+.coimne-courses-search input[type="date"] {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    flex-grow: 1;
+    min-width: 180px;
+}
+
+.coimne-courses-search button {
+    padding: 8px 16px;
+    background-color: #0073aa;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.coimne-courses-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.coimne-course-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    padding: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.coimne-course-summary {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.coimne-course-details {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.coimne-courses-pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: right;
+    margin-bottom: -20px;
+    padding-right: 10px;
+}
+
+.coimne-courses-pagination .all-pages {
+    display: inline;
+}
+
+.coimne-courses-pagination .all-pages a {
+    margin-inline: 5px;
+}
+
+.coimne-courses-pagination .all-pages a.active {
+    font-weight: bolder;
+}
+
+.coimne-courses-pagination .prev-page,
+.coimne-courses-pagination .next-page {
+    cursor: pointer;
+}
+
+.coimne-page-btn {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: #f4f4f4;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.coimne-page-btn:hover {
+    background: #e0e0e0;
+}
+
 @media (max-width: 768px) {
     .coimne-dashboard-container {
         flex-direction: column;
@@ -121,26 +226,44 @@
     .coimne-dashboard-menu {
         width: 100%;
     }
+
+    .coimne-course-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .coimne-course-item.expanded .coimne-course-details {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        max-height: 1000px;
+    }
+
+    .coimne-course-summary {
+        cursor: pointer;
+    }
 }
 
 @media (min-width: 1140px) {
     .coimne-form-row {
         display: flex;
     }
-    
+
     .coimne-form-row .coimne-form-group:not(:first-child) {
         padding-left: 10px;
     }
-    
+
     .coimne-form-row .coimne-form-group:not(:last-child) {
         padding-right: 10px;
     }
-    
+
     .coimne-form-row .coimne-form-group {
         flex-grow: 1;
         width: 33%;
     }
-    
+
     .coimne-form-group.w1\/3 {
         max-width: 33.33%;
     }

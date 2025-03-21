@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,22 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.12 =
+- Nueva funcionalidad "Mis Cursos":
+  - Formulario de búsqueda con filtros por nombre y fechas.
+  - Carga dinámica desde la API usando AJAX.
+  - Resultados renderizados con `<template>` HTML.
+  - Paginación incluida y comportamiento expandible en mobile.
+- Nuevo endpoint AJAX: `coimne_get_user_courses`.
+- Eliminación del endpoint `coimne_get_locs` y su lógica asociada.
+  - Se quitó el `<select>` de localidad en los formularios de perfil.
+  - Ahora se usa un `<input>` (`LOC`) editable o de solo lectura.
+- Reorganización de menús en `Coimne_Menu`:
+  - Se reemplazaron las constantes `COIMNE_MENU_C_ITEMS`, `E_ITEMS`, y `O_ITEMS` por arrays estáticos públicos.
+- Estilos actualizados:
+  - Nuevas clases utilitarias `.coimne-justify-*`, `.coimne-page-btn`, etc.
+  - Estilos para contenedor de cursos, resultados y paginación.
+
 = 1.0.11 =
 - Refactorización de respuestas de la API, reemplazando `desc` por `data`.
 - Mejoras en la validación de respuestas y gestión de errores en la API.

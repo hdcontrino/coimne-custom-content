@@ -28,7 +28,6 @@ class Coimne_Dashboard
         
         $countries = $api->get_countries();
         $provinces = $api->get_provinces($user_profile['PAI']);
-        $locs = $api->get_locs($user_profile['PAI'], $user_profile['PRO']);
         $towns = $api->get_towns($user_profile['PAI'], $user_profile['PRO']);
 
         $template = COIMNE_CUSTOM_TEMPLATES_DIR 
@@ -59,10 +58,6 @@ class Coimne_Dashboard
 
     public static function display_dashboard_courses()
     {
-        $api = new Coimne_API();
-
-        $courses = $api->get_courses();
-
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
             . "/dashboard-parts/courses.php";
 

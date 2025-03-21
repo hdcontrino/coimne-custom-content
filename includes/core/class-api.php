@@ -127,18 +127,21 @@ class Coimne_API
         ];
     }
 
-    public function get_courses($query = [])
+    public function get_user_courses($query = [])
     {
         $search = array_merge([
+            'page' => 1,
             'name' => '',
             'inicioDesde' => '',
             'inicioHasta' => '',
             'inscriptoDesde' => '',
             'inscriptoHasta' => '',
         ], $query);
+        $pagination = 3;
 
         $endpoint = "/MisCursos";
-        $params = "?CTT_ID=$this->userId&NOM=$search[name]";
+        $params = "?CTT_ID=$this->userId&maxResult=$pagination";
+        $params .= "&page=$search[page]&NOM=$search[name]";
 
         if ($search['inicioDesde']) {
             $desde = Coimne_Helper::format_date_to_backend($search['inicioDesde']);
@@ -164,7 +167,9 @@ class Coimne_API
 
         return [
             'success' => true,
-            'data' => $data['data']['list'][0]
+            'data' => $data['data']['list'],
+            'page' => $data['data']['page'],
+            'total_pages' => ceil($data['data']['total'] / $pagination),
         ];
     }
 
@@ -198,6 +203,7 @@ class Coimne_API
             'CPS' => $profileData['CPS'],
             'PRO' => $profileData['PRO'],
             'POB' => $profileData['POB'],
+            'LOC' => $profileData['LOC'],
             'TFN' => $profileData['TFN'],
             'TFN_MOV' => $profileData['TFN_MOV'],
             'EML' => $profileData['EML'],
@@ -214,19 +220,6 @@ class Coimne_API
             'ESC_MIN' => $profileData['ESC_MIN'],
             'TS_PRL' => $profileData['TS_PRL'],
             'EMP' => $profileData['EMP'],
-            // DATOS DE EMPRESA
-            //[
-            //    'NAME' => $profileData['EMP_NAME'],
-            //    'DIR' => $profileData['EMP_DIR'],
-            //    'DIR' => $profileData['EMP_CPS'],
-            //    'PAI' => $profileData['EMP_PAI'],
-            //    'PRO' => $profileData['EMP_PRO'],
-            //    'PRO' => $profileData['EMP_LOC'],
-            //    'POB' => $profileData['EMP_POB'],
-            //    'TFN' => $profileData['EMP_TFN'],
-            //    'TFN_MOV' => $profileData['EMP_TFN_MOV'],
-            //    'EML' => $profileData['EMP_EML'],
-            //],
             'EMP_DEP' => $profileData['EMP_DEP'],
             'EMP_CGO' => $profileData['EMP_CGO'],
             'IBAN' => $profileData['IBAN'],
@@ -308,25 +301,6 @@ class Coimne_API
     {
         $endpoint = "/Provincias";
         $params = "?CTT_ID=$this->userId&PAI=$countryId";
-
-        $data = $this->get($endpoint . $params);
-
-        if (!$data['success']) {
-            return $this->throwError($data);
-        }
-
-        return [
-            'success' => !empty($data['data']['list']),
-            'data' => $data['data']['list']
-        ];
-    }
-
-    public function get_locs($countryId, $provinceId, $zipId = 0)
-    {
-        $endpoint = "/Localidades";
-        $params = "?CTT_ID=$this->userId&PAI=$countryId&PRO=$provinceId";
-
-        if ($zipId) $params .= "&CP=$zipId";
 
         $data = $this->get($endpoint . $params);
 

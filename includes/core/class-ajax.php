@@ -29,9 +29,6 @@ class Coimne_Ajax
         add_action('wp_ajax_coimne_get_provinces', [$this, 'get_provinces']);
         add_action('wp_ajax_nopriv_coimne_get_provinces', [$this, 'get_provinces']);
 
-        add_action('wp_ajax_coimne_get_locs', [$this, 'get_locs']);
-        add_action('wp_ajax_nopriv_coimne_get_locs', [$this, 'get_locs']);
-
         add_action('wp_ajax_coimne_get_towns', [$this, 'get_towns']);
         add_action('wp_ajax_nopriv_coimne_get_towns', [$this, 'get_towns']);
 
@@ -40,6 +37,9 @@ class Coimne_Ajax
 
         add_action('wp_ajax_coimne_submit_enrollment', [$this, 'submit_enrollment']);
         add_action('wp_ajax_nopriv_coimne_submit_enrollment', [$this, 'submit_enrollment']);
+
+        add_action('wp_ajax_coimne_get_user_courses', [$this, 'get_user_courses']);
+        add_action('wp_ajax_nopriv_coimne_get_user_courses', [$this, 'get_user_courses']);
     }
 
     public function handle_login()
@@ -186,29 +186,6 @@ class Coimne_Ajax
         wp_die();
     }
 
-    public function get_locs()
-    {
-        if (!isset($_GET['country']) || !isset($_GET['province'])) {
-            wp_send_json_error(['message' => __('Faltan parámetros.', 'coimne-custom-content')]);
-            wp_die();
-        }
-
-        $api = new Coimne_API();
-        $country = sanitize_text_field($_GET['country']);
-        $province = sanitize_text_field($_GET['province']);
-        $response = $api->get_towns($country, $province);
-
-        if (!$response || !is_array($response)) {
-            wp_send_json_error([
-                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener población.', 'coimne-custom-content')
-            ]);
-            wp_die();
-        }
-
-        wp_send_json_success([$response['data']]);
-        wp_die();
-    }
-
     public function get_towns()
     {
         if (!isset($_GET['country']) || !isset($_GET['province'])) {
@@ -258,6 +235,15 @@ class Coimne_Ajax
     {
         $api = new Coimne_API();
         $response = $api->submit_enrollment($_POST);
+
+        wp_send_json($response);
+        wp_die();
+    }
+
+    public function get_user_courses()
+    {
+        $api = new Coimne_API();
+        $response = $api->get_user_courses($_POST);
 
         wp_send_json($response);
         wp_die();

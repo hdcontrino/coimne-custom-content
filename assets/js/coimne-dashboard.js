@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
 const coimneDashboard = {
     init: function () {
         this.profile.init();
+        this.courses.init();
         this.projects.init();
         this.account.init();
     },
@@ -17,7 +18,6 @@ const coimneDashboard = {
 
             this.country = document.getElementById("countries");
             this.province = document.getElementById("provinces");
-            this.loc = document.getElementById("locs");
             this.town = document.getElementById("towns");
 
             this.emp_pai = document.getElementById("emp_pai");
@@ -136,33 +136,6 @@ const coimneDashboard = {
                 });
         },
 
-        updateDistricts: function (districtSelect, provinceId) {
-            const formGroup = districtSelect.closest(".coimne-form-group");
-            formGroup.classList.add("loading");
-
-            getDistricts(provinceId)
-                .then(districts => {
-                    if (districts.length > 0) {
-                        districtSelect.innerHTML = '<option value="">Seleccionar localidad</option>';
-                        districts.forEach(district => {
-                            const option = document.createElement("option");
-                            option.value = district.ID;
-                            option.textContent = district.NAME;
-                            districtSelect.appendChild(option);
-                        });
-                    } else {
-                        districtSelect.innerHTML = "<option>No hay localidades disponibles</option>";
-                    }
-                })
-                .catch(error => {
-                    console.error("Error al cargar localidades: ", error);
-                    districtSelect.innerHTML = "<option>Error al cargar</option>";
-                })
-                .finally(() => {
-                    formGroup.classList.remove("loading");
-                });
-        },
-
         updateTowns: function (townSelect, countryId, provinceId) {
             const formGroup = townSelect.closest(".coimne-form-group");
             formGroup.classList.add("loading");
@@ -203,7 +176,6 @@ const coimneDashboard = {
             const townTarget = coimneDashboard.profile.town;
             const countryId = coimneDashboard.profile.country.value;
             const provinceId = e.target.value;
-            coimneDashboard.profile.updateDistricts(locTarget, countryId, provinceId);
             coimneDashboard.profile.updateTowns(townTarget, countryId, provinceId);
         },
 
@@ -257,6 +229,129 @@ const coimneDashboard = {
                     submitButton.innerHTML = submitButtonOriginalContent;
                     loader.style.display = "none";
                 });
+        }
+    },
+
+    courses: {
+        init: function () {
+            this.form = document.getElementById("coimne-courses-form");
+            this.paginator = document.getElementById("coimne-courses-pagination");
+            this.results = document.getElementById("coimne-courses-results");
+
+            if (this.form && this.results) {
+                this.form.addEventListener("submit", this.submit.bind(this));
+            }
+
+            if (this.paginator) {
+                this.paginator.querySelector(".all-pages").addEventListener("click", e => {
+                    if (e.target.tagName === "A" && e.target.dataset.page) {
+                        e.preventDefault();
+                        this.loadResults(parseInt(e.target.dataset.page));
+                    }
+                });
+                this.paginator.querySelector(".prev-page").addEventListener("click", e => {
+                    e.preventDefault();
+                    const active = this.paginator.querySelector(".all-pages a.active");
+                    if (!active) return;
+
+                    const prev = active.previousElementSibling;
+                    if (prev && prev.tagName === "A" && prev.dataset.page) {
+                        this.loadResults(parseInt(prev.dataset.page));
+                    }
+                });
+                this.paginator.querySelector(".next-page").addEventListener("click", e => {
+                    e.preventDefault();
+                    const active = this.paginator.querySelector(".all-pages a.active");
+                    if (!active) return;
+
+                    const next = active.nextElementSibling;
+                    if (next && next.tagName === "A" && next.dataset.page) {
+                        this.loadResults(parseInt(next.dataset.page));
+                    }
+                });
+            }
+
+            if (this.results) {
+                this.loadResults(1);
+            }
+        },
+
+        submit: function (e) {
+            e.preventDefault();
+            this.loadResults(1);
+        },
+
+        loadResults: function (page = 1) {
+            const formData = new FormData(this.form);
+            formData.append("action", "coimne_get_user_courses");
+            formData.append("page", page);
+
+            this.results.innerHTML = "<p>Cargando resultados...</p>";
+
+            fetch(coimneDashboardData.ajaxUrl, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) throw new Error(data.message || "Error al cargar resultados");
+
+                const template = document.getElementById("coimne-course-template");
+                this.results.innerHTML = "";
+
+                if (!data.data) {
+                    return this.results.innerHTML = "<p>Sin resultados</p>";
+                }
+
+                data.data.forEach(course => {
+                    const clone = document.importNode(template.content, true);
+                    const wrapper = clone.querySelector(".coimne-course-item");
+
+                    wrapper.dataset.courseId = course.CUR_COI.ID;
+
+                    clone.querySelector(".course-coi-name").textContent = course.CUR_COI.NAME ?? "—";
+                    clone.querySelector(".course-ins-est").textContent = `${course.FEC_INS} — ${course.EST}`;
+                    clone.querySelector(".course-mat-tip").textContent = course.MAT_TIP ?? "—";
+                    clone.querySelector(".course-cuo-ins").textContent = course.CUO_INS ?? "—";
+                    clone.querySelector(".course-coi-est").textContent = course.CUR_COI.EST ?? "—";
+                    clone.querySelector(".course-coi-des").textContent = course.CUR_COI.DES ?? "—";
+                    clone.querySelector(".course-fec-ini-cur").textContent = course.CUR_COI.FEC_INI_CUR ?? "—";
+                    clone.querySelector(".course-fec-fin-cur").textContent = course.CUR_COI.FEC_FIN_CUR ?? "—";
+                    clone.querySelector(".course-fec-ini-mat").textContent = course.CUR_COI.FEC_INI_MAT ?? "—";
+                    clone.querySelector(".course-fec-fin-mat").textContent = course.CUR_COI.FEC_FIN_MAT ?? "—";
+
+                    this.results.appendChild(clone);
+
+                    wrapper.addEventListener("click", e => {
+                        wrapper.classList.toggle("expanded");
+                    });
+                });
+
+                if (data.total_pages > 1) {
+                    this.paginator.hidden = false;
+                    const pageContainer = this.paginator.querySelector(".all-pages");
+                    pageContainer.innerHTML = "";
+
+                    for (let i = 1; i <= data.total_pages; i++) {
+                        const pageLink = document.createElement("a");
+                        pageLink.href = "#";
+                        pageLink.dataset.page = i;
+                        pageLink.textContent = i;
+
+                        if (i === data.page) {
+                            pageLink.classList.add("active");
+                        }
+
+                        pageContainer.appendChild(pageLink);
+                    }
+                } else {
+                    this.paginator.hidden = true;
+                }
+            })
+            .catch(err => {
+                this.results.innerHTML = "<p>⚠ Error al cargar resultados</p>";
+                console.error("loadResults error", err);
+            });
         }
     },
 
@@ -332,22 +427,6 @@ function getProvinces(countryId) {
         })
         .catch(error => {
             console.error("Error al recibir provincias:", error);
-            return [];
-        });
-}
-
-function getDistricts(countryId, provinceId) {
-    return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_locs&country=${countryId}&province=${provinceId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.data) {
-                return data.data[0];
-            } else {
-                return [];
-            }
-        })
-        .catch(error => {
-            console.error("Error al recibir localidades:", error);
             return [];
         });
 }
