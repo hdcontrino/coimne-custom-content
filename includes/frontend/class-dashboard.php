@@ -31,7 +31,7 @@ class Coimne_Dashboard
         $towns = $api->get_towns($user_profile['PAI'], $user_profile['PRO']);
 
         $template = COIMNE_CUSTOM_TEMPLATES_DIR 
-            . "/dashboard-parts/profile-$user_type.php";
+            . "/dashboard-parts/profile/profile-$user_type.php";
 
         if (file_exists($template)) {
             return include $template;
@@ -47,7 +47,7 @@ class Coimne_Dashboard
         $courses = $api->get_projects();
 
         $template = COIMNE_CUSTOM_TEMPLATES_DIR 
-            . "/dashboard-parts/projects.php";
+            . "/dashboard-parts/projects/projects.php";
 
         if (file_exists($template)) {
             return include $template;
@@ -59,7 +59,7 @@ class Coimne_Dashboard
     public static function display_dashboard_courses()
     {
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
-            . "/dashboard-parts/courses.php";
+            . "/dashboard-parts/courses/courses.php";
 
         if (file_exists($template)) {
             return include $template;
@@ -75,7 +75,7 @@ class Coimne_Dashboard
         $user_type = strtolower($api->userType);
 
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
-            . "/dashboard-parts/account-$user_type.php";
+            . "/dashboard-parts/account/account-$user_type.php";
 
         if (file_exists($template)) {
             return include $template;

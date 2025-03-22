@@ -33,7 +33,7 @@ class Coimne_Menu
         $user_type = strtolower($api->userType);
         
         $template = COIMNE_CUSTOM_TEMPLATES_DIR
-            . "/dashboard-parts/menu-$user_type.php";
+            . "/dashboard-parts/menu/menu-$user_type.php";
 
         if (file_exists($template)) {
             $saludo = sprintf(__('¡Hola, %s!', 'coimne-custom-content'), $api->userData['cttName']);

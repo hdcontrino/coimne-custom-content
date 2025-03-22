@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,12 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.13 =
+* Se reubicaron las plantillas del dashboard en subdirectorios (profile/, account/, projects/, courses/, menu/).
+* Se eliminaron archivos de plantilla antiguos que fueron reemplazados por los reorganizados.
+* Se actualizó la lógica de paginación y carga dinámica en coimne-dashboard.js, evitando duplicación.
+* Se corrigió el manejo de errores y resultados vacíos en la carga de cursos.
+
 = 1.0.12 =
 - Nueva funcionalidad "Mis Cursos":
   - Formulario de búsqueda con filtros por nombre y fechas.

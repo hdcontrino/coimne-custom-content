@@ -294,16 +294,37 @@ const coimneDashboard = {
             })
             .then(response => response.json())
             .then(data => {
-                if (!data.success) throw new Error(data.message || "Error al cargar resultados");
+                if (!data.success) {
+                    throw new Error(data.message || "Error al cargar resultados");
+                }
+                if (data.total_pages > 1) {
+                    this.paginator.style.opacity = 1;
+                    const pageContainer = this.paginator.querySelector(".all-pages");
+                    pageContainer.innerHTML = "";
 
-                const template = document.getElementById("coimne-course-template");
-                this.results.innerHTML = "";
+                    for (let i = 1; i <= data.total_pages; i++) {
+                        const pageLink = document.createElement("a");
+                        pageLink.href = "#";
+                        pageLink.dataset.page = i;
+                        pageLink.textContent = i;
 
-                if (!data.data) {
-                    return this.results.innerHTML = "<p>Sin resultados</p>";
+                        if (i === data.page) {
+                            pageLink.classList.add("active");
+                        }
+
+                        pageContainer.appendChild(pageLink);
+                    }
                 }
 
-                data.data.forEach(course => {
+                const courses = data.data;
+                const template = document.getElementById("coimne-course-template");
+                this.results.innerHTML = "";
+                
+                if (!Array.isArray(courses) || !courses.length) {
+                    return this.results.innerHTML = "<p style='text-align:center;'>No tienes cursos.</p>";
+                }
+
+                courses.forEach(course => {
                     const clone = document.importNode(template.content, true);
                     const wrapper = clone.querySelector(".coimne-course-item");
 
@@ -326,27 +347,6 @@ const coimneDashboard = {
                         wrapper.classList.toggle("expanded");
                     });
                 });
-
-                if (data.total_pages > 1) {
-                    this.paginator.hidden = false;
-                    const pageContainer = this.paginator.querySelector(".all-pages");
-                    pageContainer.innerHTML = "";
-
-                    for (let i = 1; i <= data.total_pages; i++) {
-                        const pageLink = document.createElement("a");
-                        pageLink.href = "#";
-                        pageLink.dataset.page = i;
-                        pageLink.textContent = i;
-
-                        if (i === data.page) {
-                            pageLink.classList.add("active");
-                        }
-
-                        pageContainer.appendChild(pageLink);
-                    }
-                } else {
-                    this.paginator.hidden = true;
-                }
             })
             .catch(err => {
                 this.results.innerHTML = "<p>⚠ Error al cargar resultados</p>";

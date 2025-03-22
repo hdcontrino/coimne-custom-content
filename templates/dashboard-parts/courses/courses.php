@@ -3,11 +3,42 @@
 <div class="coimne-courses-container">
     <div class="coimne-courses-search">
         <form id="coimne-courses-form">
-            <input type="text" name="name" placeholder="Buscar por nombre...">
-            <input type="date" name="start_date" placeholder="Fecha inicio curso">
-            <input type="date" name="end_date" placeholder="Fecha fin curso">
-            <input type="date" name="start_enrollment" placeholder="Inicio inscripción">
-            <input type="date" name="end_enrollment" placeholder="Fin inscripción">
+            <div class="coimne-form-row" style="width: 100%;">
+                <div class="coimne-form-group">
+                    <label for="name">
+                        <div>Nombre del curso (busca por partes del nombre)</div>
+                        <input type="text" id="name" name="name">
+                    </label>
+                </div>
+            </div>
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="iniD">
+                        <div>Fecha desde Inicio curso</div>
+                        <input type="date" id="iniD" name="inicioDesde">
+                    </label>
+                </div>
+                <div class="coimne-form-group">
+                    <label for="iniH">
+                        <div>Fecha hasta Inicio Curso</div>
+                        <input type="date" id="iniH" name="inicioHasta">
+                    </label>
+                </div>
+            </div>
+            <div class="coimne-form-row">
+                <div class="coimne-form-group">
+                    <label for="insD">
+                        <div>Fecha Inscrito desde</div>
+                        <input type="date" id="insD" name="inscriptoDesde">
+                    </label>
+                </div>
+                <div class="coimne-form-group">
+                    <label for="insH">
+                        <div>Fecha Inscrito hasta</div>
+                        <input type="date" id="insH" name="inscriptoHasta">
+                    </label>    
+                </div>
+            </div>
             <button type="submit">Buscar</button>
         </form>
     </div>
@@ -44,7 +75,7 @@
         </div>
     </template>
 
-    <div class="coimne-courses-pagination" id="coimne-courses-pagination">
+    <div class="coimne-courses-pagination" id="coimne-courses-pagination" style="opacity: 0;">
         <span class="prev-page">‹</span>
         <div class="all-pages"></div>
         <span class="next-page">›</span>
