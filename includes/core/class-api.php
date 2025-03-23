@@ -466,7 +466,7 @@ class Coimne_API
 
         return [
             'success' => true,
-            'message' => __('Documento subido correctamente.', 'coimne-custom-content')
+            'message' => __($data['message'] ?: 'Documento subido correctamente.', 'coimne-custom-content')
         ];
     }
 
@@ -568,6 +568,10 @@ class Coimne_API
         
         if ($httpCode !== 200 || !$data || !isset($data['status']) || !$data['status']) {
             return $this->throwError($data);
+        }
+
+        if (isset($data['desc']) && isset($data['desc']['success']) && $data['desc']['success']) {
+            $data['message'] = $data['message'] ?: $data['desc']['success'];
         }
 
         return [

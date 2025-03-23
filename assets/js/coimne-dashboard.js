@@ -532,7 +532,7 @@ function uploadDocument(inscriptionId, callback) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    callback("Documento subido correctamente.");
+                    callback(data.message || "Documento subido correctamente.");
                 } else {
                     callback(data.message || "Error al subir el documento.", "error");
                 }

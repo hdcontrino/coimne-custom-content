@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.14
+Stable tag: 1.0.15
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,12 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.15 =
+* Se mejoró la consistencia de los mensajes devueltos al subir documentos.
+* Ajuste en `uploadDocument()` para utilizar el mensaje del backend si está disponible.
+* Ajuste en `upload_course_document()` para devolver el mensaje proveniente de la API.
+* Compatibilidad ampliada con respuestas que incluyen `desc.success` como mensaje.
+
 = 1.0.14 =
 * Se agregó botón "Subir Documento" en cursos pendientes.
 * Validación y carga de archivos PDF mediante AJAX.
