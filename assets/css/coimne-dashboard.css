@@ -11,12 +11,14 @@
 .coimne-justify-between {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-flow: wrap;
 }
 
 .coimne-justify-right {
     display: flex;
     justify-content: right;
+    align-items: center;
 }
 
 .coimne-error-message,
@@ -171,6 +173,10 @@
     transition: all 0.3s ease;
 }
 
+.coimne-course-item .coimne-loader {
+    margin-right: 10px;
+    display: none;
+}
 .coimne-course-summary {
     font-weight: bold;
     margin-bottom: 10px;
@@ -181,12 +187,17 @@
     line-height: 1.4;
 }
 
+.coimne-course-actions-group {
+    text-align: right;
+}
+
 .coimne-courses-pagination {
     display: flex;
     gap: 8px;
     justify-content: right;
     margin-bottom: -20px;
     padding-right: 10px;
+    opacity: 0;
 }
 
 .coimne-courses-pagination .all-pages {

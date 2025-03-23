@@ -327,6 +327,8 @@ const coimneDashboard = {
                 courses.forEach(course => {
                     const clone = document.importNode(template.content, true);
                     const wrapper = clone.querySelector(".coimne-course-item");
+                    const downloadBtn = "<button class='coimne-course-download' id='coimne-course-download'>Descargar Certificado</button>";
+                    const uploadBtn = "<button class='coimne-course-upload' id='coimne-course-upload'>Subir Comprobante PDF</button>";
 
                     wrapper.dataset.courseId = course.CUR_COI.ID;
 
@@ -341,6 +343,14 @@ const coimneDashboard = {
                     clone.querySelector(".course-fec-ini-mat").textContent = course.CUR_COI.FEC_INI_MAT ?? "—";
                     clone.querySelector(".course-fec-fin-mat").textContent = course.CUR_COI.FEC_FIN_MAT ?? "—";
 
+                    if (course.CUR_COI.EST === "Finalizado") {
+                        this.createCourseButtons(clone, downloadBtn, course.CUR_COI.ID, getCertificate);
+                    }
+
+                    if (course.CUR_COI.EST === "Pendiente") {
+                        this.createCourseButtons(clone, uploadBtn, course.CUR_COI.ID, uploadDocument);
+                    }
+
                     this.results.appendChild(clone);
 
                     wrapper.addEventListener("click", e => {
@@ -351,6 +361,31 @@ const coimneDashboard = {
             .catch(err => {
                 this.results.innerHTML = "<p>⚠ Error al cargar resultados</p>";
                 console.error("loadResults error", err);
+            });
+        },
+
+        createCourseButtons: function (parent, htmlButton, courseId, commAction) {
+            const actions = parent.querySelector(".coimne-course-actions");
+            const loader = parent.querySelector(".coimne-loader");
+            const courseMessage = parent.querySelector(".coimne-course-message");
+            actions.innerHTML = htmlButton;
+
+            const actionBtn = actions.querySelector("button");
+            actionBtn.addEventListener("click", () => {
+                courseMessage.textContent = "";
+                actionBtn.disabled = true;
+                loader.style.display = 'inline';
+                commAction(courseId, (message, type) => {
+                    if (type === "error") {
+                        courseMessage.textContent = message;
+                        courseMessage.style.color = 'red';
+                    } else {
+                        courseMessage.textContent = message;
+                        courseMessage.style.color = 'green';
+                    }
+                    actionBtn.disabled = false;
+                    loader.style.display = 'none';
+                });
             });
         }
     },
@@ -445,4 +480,68 @@ function getTowns(countryId, provinceId) {
             console.error("Error al recibir municipios:", error);
             return [];
         });
+}
+
+function getCertificate(inscriptionId, callback) {
+    let error = "";
+    
+    return fetch(`${coimneDashboardData.ajaxUrl}?action=coimne_get_certificates&insId=${inscriptionId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                console.log(data);
+                error = "Sin implementar aún";
+            } else if (data.message) {
+                error = data.message;
+            }
+        })
+        .catch(error => {
+            error = "Error al recibir certificado";
+            console.error(`${error}:`, error);
+        })
+        .finally(() => {
+            if (error) {
+                return callback(error, "error");
+            }
+        });
+}
+
+function uploadDocument(inscriptionId, callback) {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/pdf";
+
+    input.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) return;
+
+        if (file.type !== "application/pdf") {
+            return callback("Sólo se permite subir archivos PDF.", "error");
+        }
+
+        const formData = new FormData();
+        formData.append("action", "coimne_upload_course_document");
+        formData.append("inscription_id", inscriptionId);
+        formData.append("file", file);
+
+        fetch(coimneDashboardData.ajaxUrl, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    callback("Documento subido correctamente.");
+                } else {
+                    callback(data.message || "Error al subir el documento.", "error");
+                }
+            })
+            .catch(error => {
+                console.error("uploadDocument error:", error);
+                callback("Error inesperado al subir el documento.", "error");
+            });
+    });
+
+    input.click();
 }

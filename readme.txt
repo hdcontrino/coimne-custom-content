@@ -6,7 +6,7 @@ Tags: login, custom content, API, widgets, shortcodes
 Requires at least: 6.0
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: Propietaria
 License URI: https://coheda.com/license
 
@@ -41,6 +41,19 @@ Sí, el formulario de login se adapta al tema actual, pero también puedes modif
 Las sesiones se manejan mediante cookies y validación con la API en cada carga de página.
 
 == Changelog ==
+= 1.0.14 =
+* Se agregó botón "Subir Documento" en cursos pendientes.
+* Validación y carga de archivos PDF mediante AJAX.
+* Nueva acción AJAX: coimne_upload_course_document.
+* Nuevo método en la API: upload_course_document().
+* Se incorporó postFile() para manejo de multipart/form-data.
+* Se agregó botón "Descargar Certificado" en cursos finalizados (sin implementar).
+* Nueva acción AJAX: coimne_get_certificates.
+* Nuevo método en la API: get_enroll_certificate().
+* Mejoras visuales en la presentación de acciones por curso.
+* Se agregó loader visual y mensajes por curso.
+* Correcciones de estilos en paginación y distribución de botones.
+
 = 1.0.13 =
 * Se reubicaron las plantillas del dashboard en subdirectorios (profile/, account/, projects/, courses/, menu/).
 * Se eliminaron archivos de plantilla antiguos que fueron reemplazados por los reorganizados.

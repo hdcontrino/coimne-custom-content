@@ -40,6 +40,12 @@ class Coimne_Ajax
 
         add_action('wp_ajax_coimne_get_user_courses', [$this, 'get_user_courses']);
         add_action('wp_ajax_nopriv_coimne_get_user_courses', [$this, 'get_user_courses']);
+
+        add_action('wp_ajax_coimne_get_certificates', [$this, 'get_certificates']);
+        add_action('wp_ajax_nopriv_coimne_get_certificates', [$this, 'get_certificates']);
+
+        add_action('wp_ajax_coimne_upload_course_document', [$this, 'upload_course_document']);
+        add_action('wp_ajax_nopriv_coimne_upload_course_document', [$this, 'upload_course_document']);
     }
 
     public function handle_login()
@@ -244,6 +250,63 @@ class Coimne_Ajax
     {
         $api = new Coimne_API();
         $response = $api->get_user_courses($_POST);
+
+        wp_send_json($response);
+        wp_die();
+    }
+
+    public function get_certificates()
+    {
+        if (!isset($_GET['insId'])) {
+            wp_send_json_error(['message' => 'Falta el identificador de la inscripción']);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+        $insId = sanitize_text_field($_GET['insId']);
+        $response = $api->get_enroll_certificate($insId);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error([
+                'message' => isset($response['message']) ? $response['message'] : __('Error al obtener certificado.', 'coimne-custom-content')
+            ]);
+            wp_die();
+        }
+
+        wp_send_json($response);
+        wp_die();
+    }
+
+    public function upload_course_document()
+    {
+        if (!isset($_POST['inscription_id']) || empty($_FILES['file'])) {
+            wp_send_json_error(['message' => __('Faltan datos requeridos.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $inscription_id = sanitize_text_field($_POST['inscription_id']);
+        $file = $_FILES['file'];
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            wp_send_json_error(['message' => __('Error al subir el archivo.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $file_type = mime_content_type($file['tmp_name']);
+
+        if ($file_type !== 'application/pdf') {
+            wp_send_json_error(['message' => __('Sólo se permiten archivos PDF.', 'coimne-custom-content')]);
+            wp_die();
+        }
+
+        $api = new Coimne_API();
+
+        $response = $api->upload_course_document($inscription_id, $file);
+
+        if (!$response || !is_array($response)) {
+            wp_send_json_error(['message' => $response['message'] ?? __('Error inesperado.', 'coimne-custom-content')]);
+            wp_die();
+        }
 
         wp_send_json($response);
         wp_die();

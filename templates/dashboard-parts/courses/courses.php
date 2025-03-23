@@ -36,7 +36,7 @@
                     <label for="insH">
                         <div>Fecha Inscrito hasta</div>
                         <input type="date" id="insH" name="inscriptoHasta">
-                    </label>    
+                    </label>
                 </div>
             </div>
             <button type="submit">Buscar</button>
@@ -72,10 +72,17 @@
                     </div>
                 </div>
             </div>
+            <div class="coimne-justify-right">
+                <span class="coimne-loader"></span>
+                <div class="coimne-course-actions-group">
+                    <div class="coimne-course-actions"></div>
+                    <div class="coimne-course-message"></div>
+                </div>
+            </div>
         </div>
     </template>
 
-    <div class="coimne-courses-pagination" id="coimne-courses-pagination" style="opacity: 0;">
+    <div class="coimne-courses-pagination" id="coimne-courses-pagination">
         <span class="prev-page">‹</span>
         <div class="all-pages"></div>
         <span class="next-page">›</span>

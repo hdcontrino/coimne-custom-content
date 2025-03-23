@@ -434,6 +434,42 @@ class Coimne_API
         ];
     }
 
+    public function get_enroll_certificate($insId)
+    {
+        $endpoint = "/downloadDocCerCur";
+        $params = "?CTT_ID=$this->userId&INS_ID=$insId";
+
+        $data = $this->get($endpoint . $params);
+
+        if (!$data['success']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => !empty($data['data']),
+            'data' => $data['data']
+        ];
+    }
+
+    public function upload_course_document($inscription_id, $file)
+    {
+        $body = [
+            'CTT_ID' => $this->userId,
+            'INS_ID' => $inscription_id
+        ];
+
+        $data = $this->postFile('/uploadDocInsCur', $body, ['file' => $file]);
+
+        if (!$data['success']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => true,
+            'message' => __('Documento subido correctamente.', 'coimne-custom-content')
+        ];
+    }
+
     private function get($endpoint, $checkSession = true)
     {   
         $finalUrl = rtrim($this->api_url, '/') . $endpoint;
@@ -492,6 +528,55 @@ class Coimne_API
         ];
     }
 
+    private function postFile($endpoint, $body = [], $files = [])
+    {
+        $finalUrl = rtrim($this->api_url, '/') . $endpoint;
+
+        $postData = $body;
+
+        foreach ($files as $field => $file) {
+            $postData[$field] = new CURLFile($file['tmp_name'], $file['type'], $file['name']);
+        }
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $finalUrl,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData,
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $this->token
+            ],
+            CURLOPT_SSL_VERIFYPEER => $this->ssl_verify,
+            CURLOPT_SSL_VERIFYHOST => $this->ssl_verify ? 2 : 0,
+            CURLOPT_TIMEOUT => 15
+        ]);
+
+        $response = curl_exec($curl);
+        
+        if ($response === false) {
+            $error = curl_error($curl);
+            curl_close($curl);
+            return $this->throwError(null, $error);
+        }
+        
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        
+        $data = json_decode($response, true);
+        
+        if ($httpCode !== 200 || !$data || !isset($data['status']) || !$data['status']) {
+            return $this->throwError($data);
+        }
+
+        return [
+            'success' => true,
+            'message' => $data['message'] ?? '',
+            'data' => $data['desc'] ?? []
+        ];
+    }
+
     private function check_session_status($response)
     {
         if (!$this->userData || !$this->token) {
@@ -524,6 +609,10 @@ class Coimne_API
 
         if ($data && isset($data['message']) && $data['message']) {
             $message = $data['message'];
+        }
+
+        if ($data && isset($data['desc']) && isset($data['desc']['error'])) {
+            $message = $data['desc']['error'];
         }
 
         if ($data && isset($data['data']) && isset($data['data']['error'])) {
